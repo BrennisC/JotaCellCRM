@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getAdmin, validOrigin } from "@/lib/security";
+import { r2Config, uploadImage } from "@/lib/r2";
 
 export const runtime = "nodejs";
 export async function POST(request: NextRequest) {
@@ -38,6 +39,25 @@ export async function POST(request: NextRequest) {
       { error: "El archivo no coincide con el formato de imagen." },
       { status: 400 },
     );
+  const config = r2Config();
+  if (config) {
+    const extension =
+      file.type === "image/png"
+        ? "png"
+        : file.type === "image/webp"
+          ? "webp"
+          : "jpg";
+    try {
+      const url = await uploadImage(config, bytes, file.type, extension);
+      return NextResponse.json({ url });
+    } catch (cause) {
+      console.error("R2 upload failed", cause);
+      return NextResponse.json(
+        { error: "No se pudo subir la imagen al almacenamiento." },
+        { status: 502 },
+      );
+    }
+  }
   const image = await prisma.productImage.create({
     data: { mime: file.type, content: bytes },
   });

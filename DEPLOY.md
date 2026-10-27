@@ -27,6 +27,16 @@ Se configuran en Vercel → Project → Settings → Environment Variables, para
 | `ADMIN_EMAIL`              | Sí          | Correo del usuario creado en Supabase Auth                 |
 | `SUPABASE_ADMIN_USER_ID`   | Sí          | User ID (UUID) de ese usuario                              |
 | `APP_ORIGIN`               | Opcional    | Dominio público, por ejemplo `https://jotacell.vercel.app` |
+| `R2_ACCOUNT_ID`            | Opcional    | Cloudflare → R2 → panel derecho                            |
+| `R2_ACCESS_KEY_ID`         | Opcional    | R2 → Manage R2 API Tokens (Object Read & Write)            |
+| `R2_SECRET_ACCESS_KEY`     | Opcional    | Se muestra una sola vez al crear el token                  |
+| `R2_BUCKET`                | Opcional    | Nombre del bucket, por ejemplo `jota-cell`                 |
+| `R2_PUBLIC_URL`            | Opcional    | URL pública del bucket (`https://pub-….r2.dev`)            |
+
+Las cinco variables `R2_*` se cargan juntas o no se cargan. Sin ellas la app
+guarda las imágenes en PostgreSQL como respaldo; con ellas las sube a Cloudflare
+R2. `R2_PUBLIC_URL` **no** es el endpoint S3 (`…r2.cloudflarestorage.com`), sino
+la URL pública del bucket. Verifica la configuración con `bun run r2:check`.
 
 Recomendaciones para la URL de conexión:
 
@@ -79,10 +89,15 @@ necesario ejecutarlos en Vercel.
   tienda con ventas reales necesita el plan **Pro**. Revísalo antes de publicar.
 - **Tamaño de subida.** Las funciones serverless aceptan hasta 4.5 MB por
   petición; la app corta en **4 MB** por imagen. Vercel rechaza el resto con 413.
-- **Imágenes en PostgreSQL.** Consumen almacenamiento y ancho de banda del plan de
-  Supabase. Comprime las fotos antes de subirlas.
+- **Imágenes en R2.** Con las variables `R2_*` configuradas, las fotos se guardan
+  en Cloudflare R2 (10 GB gratis, sin costo de salida) y en la base solo queda la
+  URL. Sin ellas se guardan en PostgreSQL y consumen almacenamiento y ancho de
+  banda de Supabase.
+- **`r2.dev` no es para producción.** Cloudflare limita ese subdominio y lo marca
+  como solo para pruebas. Conecta un dominio propio al bucket (`img.tudominio.pe`)
+  antes de publicar la tienda.
 - **Sin sistema de archivos persistente.** Todo lo que se guarde en disco se
-  pierde; por eso las imágenes viven en la base de datos.
+  pierde; por eso las imágenes viven en R2 o en la base de datos.
 - **Región.** Supabase está en `us-west-2`. Si tu plan permite elegir región,
   usa `pdx1` para reducir latencia.
 - **Cold starts.** La primera petición tras inactividad tarda más por Prisma; es

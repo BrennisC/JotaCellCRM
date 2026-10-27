@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { guarded, InputError, integer, required } from "@/lib/api";
 import { toCents } from "@/lib/finance";
 import { defaultCondition, isCondition } from "@/lib/conditions";
+import { validImageUrl } from "@/lib/r2";
 
 export const runtime = "nodejs";
 const allowedSpecs = [
@@ -27,10 +28,7 @@ export async function POST(request: NextRequest) {
       );
     if (
       !Array.isArray(d.images) ||
-      d.images.some(
-        (x: unknown) =>
-          typeof x !== "string" || !/^\/api\/images\/[a-z0-9]+$/.test(x),
-      )
+      d.images.some((x: unknown) => !validImageUrl(x))
     )
       throw new InputError("Imágenes inválidas.");
     const specs =
@@ -66,14 +64,18 @@ export async function POST(request: NextRequest) {
           data: values,
         })
       : await prisma.product.create({ data: values });
+    const legacyIds = (d.images as string[])
+      .filter((url) => url.startsWith("/api/images/"))
+      .map((url) => url.split("/").pop()!);
     await prisma.$transaction([
-      prisma.productImage.updateMany({
-        where: {
-          id: { in: d.images.map((url: string) => url.split("/").pop()!) },
-          productId: null,
-        },
-        data: { productId: product.id },
-      }),
+      ...(legacyIds.length
+        ? [
+            prisma.productImage.updateMany({
+              where: { id: { in: legacyIds }, productId: null },
+              data: { productId: product.id },
+            }),
+          ]
+        : []),
       prisma.auditLog.create({
         data: {
           adminId,

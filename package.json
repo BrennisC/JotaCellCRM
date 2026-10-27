@@ -13,6 +13,7 @@
     "db:generate": "bun --env-file=.env.local ./node_modules/prisma/build/index.js generate",
     "db:deploy": "bun --env-file=.env.local ./node_modules/prisma/build/index.js migrate deploy",
     "db:check-security": "bun --env-file=.env.local scripts/check-rls.ts",
+    "r2:check": "bun --env-file=.env.local scripts/check-r2.ts",
     "admin:setup": "bun --env-file=.env.local scripts/admin.ts",
     "format:check": "prettier --check \"app/**/*.{ts,tsx,css}\" \"components/**/*.{ts,tsx}\" \"lib/**/*.ts\""
   },
@@ -20,6 +21,7 @@
     "@fontsource/inter": "^5.3.0",
     "@prisma/client": "6.19.3",
     "@supabase/supabase-js": "^2.112.3",
+    "aws4fetch": "^1.0.20",
     "jspdf": "^4.2.1",
     "jspdf-autotable": "^5.0.9",
     "lucide-react": "^1.62.0",
