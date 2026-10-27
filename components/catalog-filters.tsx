@@ -1,8 +1,7 @@
 "use client";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Search, SlidersHorizontal, X } from "lucide-react";
-import { useRef, useState, useTransition } from "react";
+import { useRef, useTransition } from "react";
 import {
   priceRanges,
   sortOptions,
@@ -28,17 +27,39 @@ export function CatalogFilters({
 }) {
   const router = useRouter();
   const form = useRef<HTMLFormElement>(null);
-  const [term, setTerm] = useState(search.q || "");
   const [pending, startTransition] = useTransition();
 
-  const apply = () => {
-    const params = new URLSearchParams();
-    for (const [key, value] of new FormData(form.current!))
-      if (typeof value === "string" && value.trim()) params.set(key, value);
+  const value = (key: string, fallback = "") => search[key] ?? fallback;
+
+  const push = (params: URLSearchParams) => {
     const query = params.toString();
     startTransition(() =>
       router.push(query ? `/celulares?${query}` : "/celulares"),
     );
+  };
+
+  const submit = (target: HTMLFormElement) => {
+    const params = new URLSearchParams();
+    for (const [key, field] of new FormData(target))
+      if (typeof field === "string" && field.trim()) params.set(key, field);
+    push(params);
+  };
+
+  /** Removes only the text query, keeping the selected filters. */
+  const clearSearch = () => {
+    const params = new URLSearchParams();
+    for (const [key, field] of new FormData(form.current!))
+      if (key !== "q" && typeof field === "string" && field.trim())
+        params.set(key, field);
+    push(params);
+  };
+
+  const clear = () => {
+    const alreadyClean = Object.entries(search).every(
+      ([key, field]) => key === "pagina" || !field,
+    );
+    if (alreadyClean) startTransition(() => router.refresh());
+    else push(new URLSearchParams());
   };
 
   return (
@@ -46,30 +67,28 @@ export function CatalogFilters({
       ref={form}
       onSubmit={(event) => {
         event.preventDefault();
-        apply();
+        submit(event.currentTarget);
       }}
       onChange={(event) => {
-        if (event.target instanceof HTMLSelectElement) apply();
+        if (event.target instanceof HTMLSelectElement)
+          submit(event.currentTarget);
       }}
     >
       <div className="catalog-toolbar">
         <div className="catalog-search">
           <Search size={19} />
           <input
+            key={`q-${value("q")}`}
             name="q"
             aria-label="Buscar celulares"
             placeholder="Busca por marca o modelo..."
-            value={term}
-            onChange={(event) => setTerm(event.target.value)}
+            defaultValue={value("q")}
           />
-          {term && (
+          {value("q") && (
             <button
               type="button"
               aria-label="Borrar búsqueda"
-              onClick={() => {
-                setTerm("");
-                apply();
-              }}
+              onClick={clearSearch}
             >
               <X size={17} />
             </button>
@@ -88,7 +107,11 @@ export function CatalogFilters({
           </h2>
           <label>
             Marca
-            <select name="marca" defaultValue={search.marca || ""}>
+            <select
+              key={`marca-${value("marca")}`}
+              name="marca"
+              defaultValue={value("marca")}
+            >
               <option value="">Todas las marcas</option>
               {brands.map((brand) => (
                 <option key={brand} value={brand}>
@@ -99,7 +122,11 @@ export function CatalogFilters({
           </label>
           <label>
             Estado del equipo
-            <select name="condicion" defaultValue={search.condicion || ""}>
+            <select
+              key={`condicion-${value("condicion")}`}
+              name="condicion"
+              defaultValue={value("condicion")}
+            >
               <option value="">Todos</option>
               {conditions.map((condition) => (
                 <option key={condition} value={condition}>
@@ -111,8 +138,9 @@ export function CatalogFilters({
           <label>
             Almacenamiento
             <select
+              key={`almacenamiento-${value("almacenamiento")}`}
               name="almacenamiento"
-              defaultValue={search.almacenamiento || ""}
+              defaultValue={value("almacenamiento")}
             >
               <option value="">Todos</option>
               {storages.map((storage) => (
@@ -124,7 +152,11 @@ export function CatalogFilters({
           </label>
           <label>
             Memoria RAM
-            <select name="ram" defaultValue={search.ram || ""}>
+            <select
+              key={`ram-${value("ram")}`}
+              name="ram"
+              defaultValue={value("ram")}
+            >
               <option value="">Todas</option>
               {rams.map((ram) => (
                 <option key={ram} value={ram}>
@@ -135,7 +167,11 @@ export function CatalogFilters({
           </label>
           <label>
             Precio
-            <select name="precio" defaultValue={search.precio || ""}>
+            <select
+              key={`precio-${value("precio")}`}
+              name="precio"
+              defaultValue={value("precio")}
+            >
               <option value="">Cualquier precio</option>
               {priceRanges.map((range) => (
                 <option key={range.key} value={range.key}>
@@ -146,7 +182,11 @@ export function CatalogFilters({
           </label>
           <label>
             Disponibilidad
-            <select name="disponible" defaultValue={search.disponible || ""}>
+            <select
+              key={`disponible-${value("disponible")}`}
+              name="disponible"
+              defaultValue={value("disponible")}
+            >
               <option value="">Todos</option>
               <option value="1">Disponibles</option>
               <option value="agotado">Agotados</option>
@@ -154,7 +194,11 @@ export function CatalogFilters({
           </label>
           <label>
             Ordenar por
-            <select name="orden" defaultValue={search.orden || "recientes"}>
+            <select
+              key={`orden-${value("orden", "recientes")}`}
+              name="orden"
+              defaultValue={value("orden", "recientes")}
+            >
               {sortOptions.map((option) => (
                 <option key={option.key} value={option.key}>
                   {option.label}
@@ -162,9 +206,9 @@ export function CatalogFilters({
               ))}
             </select>
           </label>
-          <Link className="clear-filters" href="/celulares">
+          <button type="button" className="clear-filters" onClick={clear}>
             Limpiar filtros
-          </Link>
+          </button>
         </aside>
         {children}
       </div>
