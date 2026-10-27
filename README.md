@@ -44,6 +44,10 @@ bun run build
 
 Se utiliza Webpack en desarrollo y compilación porque Turbopack necesita permisos de creación de junctions de Windows para el cliente de Prisma. El CSS está dividido por responsabilidad y todos los archivos fuente/migraciones se mantienen bajo 300 líneas después del formateador.
 
+## Despliegue
+
+En Vercel, importa el repositorio y carga las variables de entorno. La guía completa, con límites del plan, migraciones y verificación posterior, está en [DEPLOY.md](./DEPLOY.md).
+
 ## Licencia
 
 Software propietario. **Todos los derechos reservados.** No se concede permiso para copiar, distribuir, publicar, sublicenciar ni crear obras derivadas. Consulta [LICENSE.md](./LICENSE.md) para los términos completos.

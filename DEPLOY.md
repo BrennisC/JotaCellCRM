@@ -5,28 +5,28 @@ administrativo no requiere configuración adicional: usa las mismas variables.
 
 ## 1. Archivos ya preparados
 
-| Archivo                    | Función                                                        |
-| -------------------------- | -------------------------------------------------------------- |
-| `vercel.json`              | Framework, instalación con Bun y comando de build              |
-| `package.json`             | `vercel:build` ejecuta `prisma generate` antes de compilar      |
-| `prisma/schema.prisma`     | `binaryTargets` incluye el runtime Linux de Vercel             |
-| `next.config.ts`           | Cabeceras de seguridad (anti-clickjacking, nosniff, referrer)  |
-| `.gitignore`               | Excluye `.env*` y conserva solo `.env.example`                 |
+| Archivo                | Función                                                       |
+| ---------------------- | ------------------------------------------------------------- |
+| `vercel.json`          | Framework, instalación con Bun y comando de build             |
+| `package.json`         | `vercel:build` ejecuta `prisma generate` antes de compilar    |
+| `prisma/schema.prisma` | `binaryTargets` incluye el runtime Linux de Vercel            |
+| `next.config.ts`       | Cabeceras de seguridad (anti-clickjacking, nosniff, referrer) |
+| `.gitignore`           | Excluye `.env*` y conserva solo `.env.example`                |
 
 ## 2. Variables de entorno
 
 Se configuran en Vercel → Project → Settings → Environment Variables, para
 **Production** y **Preview**. No se suben al repositorio.
 
-| Variable                    | Obligatoria | Origen                                                        |
-| --------------------------- | ----------- | ------------------------------------------------------------- |
-| `DATABASE_URL`              | Sí          | Supabase → Connect → Transaction pooler, puerto 6543           |
-| `DIRECT_URL`                | Sí          | Supabase → Connect → Session pooler, puerto 5432               |
-| `SUPABASE_URL`              | Sí          | `https://<ref>.supabase.co`                                    |
-| `SUPABASE_PUBLISHABLE_KEY`  | Sí          | Supabase → Project Settings → API Keys                         |
-| `ADMIN_EMAIL`               | Sí          | Correo del usuario creado en Supabase Auth                     |
-| `SUPABASE_ADMIN_USER_ID`    | Sí          | User ID (UUID) de ese usuario                                  |
-| `APP_ORIGIN`                | Opcional    | Dominio público, por ejemplo `https://jotacell.vercel.app`     |
+| Variable                   | Obligatoria | Origen                                                     |
+| -------------------------- | ----------- | ---------------------------------------------------------- |
+| `DATABASE_URL`             | Sí          | Supabase → Connect → Transaction pooler, puerto 6543       |
+| `DIRECT_URL`               | Sí          | Supabase → Connect → Session pooler, puerto 5432           |
+| `SUPABASE_URL`             | Sí          | `https://<ref>.supabase.co`                                |
+| `SUPABASE_PUBLISHABLE_KEY` | Sí          | Supabase → Project Settings → API Keys                     |
+| `ADMIN_EMAIL`              | Sí          | Correo del usuario creado en Supabase Auth                 |
+| `SUPABASE_ADMIN_USER_ID`   | Sí          | User ID (UUID) de ese usuario                              |
+| `APP_ORIGIN`               | Opcional    | Dominio público, por ejemplo `https://jotacell.vercel.app` |
 
 Recomendaciones para la URL de conexión:
 
@@ -64,14 +64,14 @@ necesario ejecutarlos en Vercel.
 
 ## 5. Verificación posterior
 
-| Comprobación                          | Resultado esperado                       |
-| ------------------------------------- | ---------------------------------------- |
-| `/` y `/celulares`                    | 200 y catálogo visible                   |
-| `/admin` sin sesión                   | Redirige a `/admin/login`                |
-| Login con el usuario de Supabase Auth | Entra al panel sin errores               |
-| Guardar Configuración                 | 200 y datos persistidos                  |
-| Subir una imagen                      | Se muestra en la ficha pública           |
-| Recargar el panel tras 1 hora         | Renueva la sesión sin pedir contraseña   |
+| Comprobación                          | Resultado esperado                     |
+| ------------------------------------- | -------------------------------------- |
+| `/` y `/celulares`                    | 200 y catálogo visible                 |
+| `/admin` sin sesión                   | Redirige a `/admin/login`              |
+| Login con el usuario de Supabase Auth | Entra al panel sin errores             |
+| Guardar Configuración                 | 200 y datos persistidos                |
+| Subir una imagen                      | Se muestra en la ficha pública         |
+| Recargar el panel tras 1 hora         | Renueva la sesión sin pedir contraseña |
 
 ## 6. Límites y advertencias
 
