@@ -2,14 +2,22 @@
 import { useState } from "react";
 import { Clock3, CreditCard, Plus, ShoppingBag } from "lucide-react";
 import { money, day, dateKey } from "@/lib/format";
-import type { AdminData } from "./types";
+import type { AdminData, Sale } from "./types";
 import { stateOf } from "./types";
 import { Actions, Badge, Field, Modal, PageTitle } from "./form-parts";
+import { SearchSelect } from "./search-select";
+import { AdminPager } from "./admin-pager";
+import { paginate } from "@/lib/pagination";
 type Submit = (
   path: string,
   body: Record<string, unknown>,
   method?: string,
 ) => Promise<unknown>;
+const pendingOf = (sale: Sale) =>
+  Math.max(
+    0,
+    sale.priceCents - sale.payments.reduce((n, p) => n + p.amountCents, 0),
+  );
 export function InstallmentsSection({
   data,
   submit,
@@ -22,11 +30,25 @@ export function InstallmentsSection({
     [modal, setModal] = useState(false),
     [busy, setBusy] = useState(false),
     [error, setError] = useState(""),
-    [filter, setFilter] = useState("all");
+    [filter, setFilter] = useState("all"),
+    [schedulePage, setSchedulePage] = useState(1),
+    [paymentPage, setPaymentPage] = useState(1);
   const installmentSales = data.sales.filter(
     (s) => s.type === "installments" && s.status === "active",
   );
   const selected = installmentSales.find((s) => s.id === saleId);
+  const saleItems = installmentSales.map((s) => ({
+    id: s.id,
+    label: `${s.code} · ${s.buyerName}`,
+    meta: money(pendingOf(s)),
+    keywords: [
+      s.buyerDocument,
+      s.buyerPhone,
+      s.variant.product.brand,
+      s.variant.product.model,
+      s.imei ?? "",
+    ].join(" "),
+  }));
   const initialPaid =
     selected?.payments
       .filter((p) => p.kind === "initial")
@@ -41,6 +63,14 @@ export function InstallmentsSection({
   const installments = data.sales
     .flatMap((s) => s.installments.map((i) => ({ sale: s, item: i })))
     .filter(({ item }) => filter === "all" || stateOf(item) === filter);
+  const scheduleRows = paginate(installments, schedulePage, 7);
+  const paymentRows = paginate(
+    data.sales
+      .flatMap((s) => s.payments.map((p) => ({ s, p })))
+      .sort((a, b) => b.p.paidAt.localeCompare(a.p.paidAt)),
+    paymentPage,
+    7,
+  );
   return (
     <>
       <PageTitle
@@ -116,7 +146,10 @@ export function InstallmentsSection({
           <select
             className="filter-select"
             value={filter}
-            onChange={(e) => setFilter(e.target.value)}
+            onChange={(e) => {
+              setFilter(e.target.value);
+              setSchedulePage(1);
+            }}
           >
             <option value="all">Todos los estados</option>
             <option>Pendiente</option>
@@ -125,8 +158,8 @@ export function InstallmentsSection({
             <option>Vencida</option>
           </select>
         </div>
-        {installments.length ? (
-          installments.map(({ sale, item }) => (
+        {scheduleRows.items.length ? (
+          scheduleRows.items.map(({ sale, item }) => (
             <div className="installment-admin-row" key={item.id}>
               <span className="installment-index">
                 {String(item.number).padStart(2, "0")}
@@ -163,38 +196,48 @@ export function InstallmentsSection({
             <p>Las cuotas aparecerán al registrar una venta a plazos.</p>
           </div>
         )}
+        <AdminPager
+          page={scheduleRows.page}
+          pages={scheduleRows.pages}
+          onChange={setSchedulePage}
+          label="Páginas del cronograma de cuotas"
+        />
       </div>
       <div className="admin-panel table-panel payments-history">
         <div className="admin-panel-head">
           <div>
             <h2>Historial de pagos</h2>
-            <p>Cobros registrados manualmente y al contado</p>
+            <p>
+              {paymentRows.total} cobros registrados manualmente y al contado
+            </p>
           </div>
         </div>
-        {data.sales
-          .flatMap((s) => s.payments.map((p) => ({ s, p })))
-          .sort((a, b) => b.p.paidAt.localeCompare(a.p.paidAt))
-          .slice(0, 15)
-          .map(({ s, p }) => (
-            <div className="recent-row" key={p.id}>
-              <span className="stat-icon sage">
-                <CreditCard size={17} />
-              </span>
-              <div>
-                <strong>{s.buyerName}</strong>
-                <small>
-                  {s.code} ·{" "}
-                  {p.kind === "initial"
-                    ? "Inicial"
-                    : p.kind === "cash"
-                      ? "Contado"
-                      : "Cuota"}{" "}
-                  · {day(p.paidAt)}
-                </small>
-              </div>
-              <strong>+ {money(p.amountCents)}</strong>
+        {paymentRows.items.map(({ s, p }) => (
+          <div className="recent-row" key={p.id}>
+            <span className="stat-icon sage">
+              <CreditCard size={17} />
+            </span>
+            <div>
+              <strong>{s.buyerName}</strong>
+              <small>
+                {s.code} ·{" "}
+                {p.kind === "initial"
+                  ? "Inicial"
+                  : p.kind === "cash"
+                    ? "Contado"
+                    : "Cuota"}{" "}
+                · {day(p.paidAt)}
+              </small>
             </div>
-          ))}
+            <strong>+ {money(p.amountCents)}</strong>
+          </div>
+        ))}
+        <AdminPager
+          page={paymentRows.page}
+          pages={paymentRows.pages}
+          onChange={setPaymentPage}
+          label="Páginas del historial de pagos"
+        />
       </div>
       {modal && (
         <Modal title="Registrar pago manual" onClose={() => setModal(false)}>
@@ -210,6 +253,7 @@ export function InstallmentsSection({
                   kind,
                   key: crypto.randomUUID(),
                 });
+                setPaymentPage(1);
                 setModal(false);
               } catch (ex) {
                 setError((ex as Error).message);
@@ -220,18 +264,13 @@ export function InstallmentsSection({
           >
             <div className="admin-form-grid">
               <Field label="Venta">
-                <select
+                <SearchSelect
+                  options={saleItems}
                   value={saleId}
-                  onChange={(e) => setSaleId(e.target.value)}
-                  required
-                >
-                  <option value="">Selecciona venta</option>
-                  {installmentSales.map((s) => (
-                    <option key={s.id} value={s.id}>
-                      {s.code} · {s.buyerName}
-                    </option>
-                  ))}
-                </select>
+                  onChange={setSaleId}
+                  placeholder="Buscar código o comprador..."
+                  empty="No hay ventas a cuotas activas."
+                />
               </Field>
               <Field label="Tipo">
                 <select value={kind} onChange={(e) => setKind(e.target.value)}>
@@ -247,6 +286,7 @@ export function InstallmentsSection({
                   max={balance / 100}
                   step="0.01"
                   required
+                  key={saleId}
                 />
               </Field>
               <Field label="Fecha de pago">

@@ -3,6 +3,7 @@ import { useState } from "react";
 import { dateKey } from "@/lib/format";
 import type { AdminData, Sale } from "./types";
 import { Actions, Field, Modal } from "./form-parts";
+import { VariantSearch } from "./variant-search";
 export function SaleForm({
   data,
   editing,
@@ -34,8 +35,12 @@ export function SaleForm({
       <form
         onSubmit={async (e) => {
           e.preventDefault();
-          setBusy(true);
           setError("");
+          if (!editing && !variantId) {
+            setError("Selecciona el celular y su variante antes de continuar.");
+            return;
+          }
+          setBusy(true);
           try {
             const values = Object.fromEntries(new FormData(e.currentTarget));
             await submit(
@@ -68,24 +73,14 @@ export function SaleForm({
                 />
               </Field>
               <Field label="Celular y variante">
-                <select
+                <VariantSearch
+                  options={variants}
                   value={variantId}
-                  onChange={(e) => setVariantId(e.target.value)}
-                  required
-                >
-                  <option value="">Selecciona variante</option>
-                  {variants
-                    .filter((v) => v.stock > 0)
-                    .map((v) => (
-                      <option value={v.id} key={v.id}>
-                        {v.product.brand} {v.product.model} · {v.color} ·{" "}
-                        {v.storage} ({v.stock} disponibles)
-                      </option>
-                    ))}
-                </select>
+                  onChange={setVariantId}
+                />
               </Field>
               <Field label="IMEI (opcional)">
-                <select name="imei" defaultValue="">
+                <select name="imei" defaultValue="" key={variantId}>
                   <option value="">Sin IMEI</option>
                   {current?.serials
                     .filter((s) => !s.sold)
