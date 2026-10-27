@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { catalog } from "@/lib/catalog";
 import {
+  catalogFacets,
   filterCatalog,
   sortStorages,
   type CatalogSearch,
@@ -10,8 +11,17 @@ import { ProductCard } from "@/components/product-card";
 import { CatalogFilters } from "@/components/catalog-filters";
 import { CatalogPagination } from "@/components/catalog-pagination";
 import { Smartphone } from "lucide-react";
+import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "Celulares en venta",
+  description:
+    "Catálogo de celulares nuevos con garantía. Filtra por marca, capacidad y precio, y consulta disponibilidad.",
+  alternates: { canonical: "/celulares" },
+  openGraph: { url: "/celulares" },
+};
 
 const normalize = (raw: Record<string, string | string[] | undefined>) =>
   Object.fromEntries(
@@ -36,8 +46,8 @@ export default async function Catalog({
   } catch {}
   const search = normalize(await searchParams);
   const { items, total, page, pages } = filterCatalog(products, search);
+  const facets = catalogFacets(products, search);
   const brands = [...new Set(products.map((p) => p.brand))].sort();
-  const conditions = [...new Set(products.map((p) => p.condition))].sort();
   const rams = [
     ...new Set(products.flatMap((p) => p.variants.map((v) => v.ram))),
   ].sort((a, b) => parseInt(a) - parseInt(b) || a.localeCompare(b));
@@ -62,7 +72,7 @@ export default async function Catalog({
         <CatalogFilters
           search={search}
           brands={brands}
-          conditions={conditions}
+          facets={facets}
           rams={rams}
           storages={storages}
           total={total}

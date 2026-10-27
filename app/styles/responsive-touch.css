@@ -28,7 +28,6 @@
 }
 .admin-modal,
 .spec-panel,
-.catalog-layout,
 .detail-layout {
   min-width: 0;
 }
@@ -168,8 +167,8 @@
   .catalog-toolbar {
     flex-wrap: wrap;
   }
-  .catalog-filters {
-    gap: 0 10px;
+  .catalog-toolbar-meta {
+    gap: 10px;
   }
   .detail-commercial h1 {
     font-size: 39px;

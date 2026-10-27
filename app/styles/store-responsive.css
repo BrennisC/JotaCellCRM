@@ -185,26 +185,28 @@
     padding-top: 55px;
     padding-bottom: 70px;
   }
-  .catalog-layout {
-    display: block;
+  .catalog-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    margin-top: 30px;
   }
-  .catalog-filters {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0 14px;
-    margin-bottom: 20px;
+  .catalog-toolbar-meta {
+    justify-content: space-between;
   }
-  .catalog-filters select,
-  .catalog-filters input {
-    height: 48px;
-    font-size: 14px;
+  .catalog-more-grid {
+    grid-template-columns: 1fr;
   }
-  .catalog-filters h2 {
-    grid-column: 1/-1;
+  .filter-chip {
+    height: 42px;
   }
-  .catalog-filters .clear-filters {
-    grid-column: 1/-1;
-    text-align: left;
+  .chip-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 7px;
+  }
+  .chip-row-label {
+    width: auto;
   }
 }
 @media (max-width: 520px) {
@@ -241,17 +243,19 @@
     gap: 10px;
     flex-wrap: wrap;
   }
-  .catalog-filters {
-    grid-template-columns: 1fr;
+  .catalog-more-grid select {
+    height: 48px;
+    font-size: 14px;
   }
-  .catalog-filters select,
-  .catalog-filters input {
-    height: 52px;
-    font-size: 15px;
-    padding: 0 14px;
-  }
-  .catalog-filters label {
+  .catalog-more-grid label {
     font-size: 13px;
+  }
+  .catalog-sort {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .catalog-sort select {
+    flex: 1;
   }
   .contact-banner h2 {
     font-size: 30px;

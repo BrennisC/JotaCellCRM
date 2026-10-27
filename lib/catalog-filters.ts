@@ -6,15 +6,34 @@ export type CatalogSearch = Record<string, string | undefined>;
 export const PAGE_SIZE = 12;
 
 export const priceRanges = [
-  { key: "hasta-1000", label: "Hasta S/ 1,000", min: 0, max: 100000 },
-  { key: "1000-2000", label: "S/ 1,000 a S/ 2,000", min: 100000, max: 200000 },
+  {
+    key: "hasta-1000",
+    label: "Hasta S/ 1,000",
+    short: "Hasta S/ 1,000",
+    min: 0,
+    max: 100000,
+  },
+  {
+    key: "1000-2000",
+    label: "S/ 1,000 a S/ 2,000",
+    short: "S/ 1,000–2,000",
+    min: 100000,
+    max: 200000,
+  },
   {
     key: "2000-3500",
     label: "S/ 2,000 a S/ 3,500",
+    short: "S/ 2,000–3,500",
     min: 200000,
     max: 350000,
   },
-  { key: "desde-3500", label: "Más de S/ 3,500", min: 350000, max: null },
+  {
+    key: "desde-3500",
+    label: "Más de S/ 3,500",
+    short: "Más de S/ 3,500",
+    min: 350000,
+    max: null,
+  },
 ];
 
 export const sortOptions = [
@@ -41,45 +60,123 @@ export const sortStorages = (values: string[]) =>
     (a, b) => storageSize(a) - storageSize(b) || a.localeCompare(b),
   );
 
+const hasStock = (product: CatalogProduct) =>
+  product.variants.some((v) => v.stock > 0);
+
+const inPriceRange = (
+  product: CatalogProduct,
+  range: (typeof priceRanges)[number],
+) =>
+  product.variants.some((v) => {
+    const cents = v.salePriceCents ?? v.priceCents;
+    return cents >= range.min && (range.max === null || cents < range.max);
+  });
+
+/**
+ * Checks a product against every active filter. `ignore` skips one dimension,
+ * which is how facet counters show "what would happen if I picked this".
+ */
+export function matchesSearch(
+  product: CatalogProduct,
+  search: CatalogSearch,
+  ignore?: string,
+) {
+  const term = (search.q || "").trim().toLowerCase();
+  const range = priceRanges.find((r) => r.key === search.precio);
+  if (ignore !== "marca" && search.marca && product.brand !== search.marca)
+    return false;
+  if (term && !`${product.brand} ${product.model}`.toLowerCase().includes(term))
+    return false;
+  if (
+    ignore !== "almacenamiento" &&
+    search.almacenamiento &&
+    !product.variants.some((v) => v.storage === search.almacenamiento)
+  )
+    return false;
+  if (
+    ignore !== "ram" &&
+    search.ram &&
+    !product.variants.some((v) => v.ram === search.ram)
+  )
+    return false;
+  if (ignore !== "precio" && range && !inPriceRange(product, range))
+    return false;
+  if (
+    ignore !== "disponible" &&
+    search.disponible === "1" &&
+    !hasStock(product)
+  )
+    return false;
+  if (
+    ignore !== "disponible" &&
+    search.disponible === "agotado" &&
+    hasStock(product)
+  )
+    return false;
+  return true;
+}
+
+export type CatalogFacets = {
+  total: number;
+  available: number;
+  soldOut: number;
+  brands: Record<string, number>;
+  storages: Record<string, number>;
+  rams: Record<string, number>;
+  prices: Record<string, number>;
+};
+
+/**
+ * Result count per filter option, so the UI can hide dead ends before the user
+ * taps them. Each dimension ignores its own filter to keep options reachable.
+ */
+export function catalogFacets(
+  products: CatalogProduct[],
+  search: CatalogSearch,
+): CatalogFacets {
+  const count = (ignore?: string, test?: (p: CatalogProduct) => boolean) =>
+    products.filter(
+      (p) => (!test || test(p)) && matchesSearch(p, search, ignore),
+    ).length;
+  const tally = (
+    values: string[],
+    ignore: string,
+    test: (value: string) => (p: CatalogProduct) => boolean,
+  ) => Object.fromEntries(values.map((v) => [v, count(ignore, test(v))]));
+
+  return {
+    total: count(),
+    available: count("disponible", hasStock),
+    soldOut: count("disponible", (p) => !hasStock(p)),
+    brands: tally(
+      [...new Set(products.map((p) => p.brand))],
+      "marca",
+      (brand) => (p) => p.brand === brand,
+    ),
+    storages: tally(
+      [...new Set(products.flatMap((p) => p.variants.map((v) => v.storage)))],
+      "almacenamiento",
+      (storage) => (p) => p.variants.some((v) => v.storage === storage),
+    ),
+    rams: tally(
+      [...new Set(products.flatMap((p) => p.variants.map((v) => v.ram)))],
+      "ram",
+      (ram) => (p) => p.variants.some((v) => v.ram === ram),
+    ),
+    prices: Object.fromEntries(
+      priceRanges.map((range) => [
+        range.key,
+        count("precio", (p) => inPriceRange(p, range)),
+      ]),
+    ),
+  };
+}
+
 export function filterCatalog(
   products: CatalogProduct[],
   search: CatalogSearch,
 ) {
-  const term = (search.q || "").trim().toLowerCase();
-  const range = priceRanges.find((r) => r.key === search.precio);
-  const items = products.filter((product) => {
-    if (search.marca && product.brand !== search.marca) return false;
-    if (search.condicion && product.condition !== search.condicion)
-      return false;
-    if (
-      term &&
-      !`${product.brand} ${product.model}`.toLowerCase().includes(term)
-    )
-      return false;
-    if (
-      search.almacenamiento &&
-      !product.variants.some((v) => v.storage === search.almacenamiento)
-    )
-      return false;
-    if (search.ram && !product.variants.some((v) => v.ram === search.ram))
-      return false;
-    if (
-      range &&
-      !product.variants.some((v) => {
-        const cents = v.salePriceCents ?? v.priceCents;
-        return cents >= range.min && (range.max === null || cents < range.max);
-      })
-    )
-      return false;
-    if (search.disponible === "1" && !product.variants.some((v) => v.stock > 0))
-      return false;
-    if (
-      search.disponible === "agotado" &&
-      product.variants.some((v) => v.stock > 0)
-    )
-      return false;
-    return true;
-  });
+  const items = products.filter((product) => matchesSearch(product, search));
 
   const sort =
     sortOptions.find((o) => o.key === search.orden)?.key || "recientes";
@@ -116,14 +213,10 @@ export function catalogHref(search: CatalogSearch, page = 1) {
   return query ? `/celulares?${query}` : "/celulares";
 }
 
-/** Page numbers to render, with gaps marked by zero. */
-export function pageWindow(page: number, pages: number) {
-  if (pages <= 7) return Array.from({ length: pages }, (_, i) => i + 1);
-  const numbers = new Set([1, pages, page - 1, page, page + 1]);
-  const sorted = [...numbers]
-    .filter((n) => n >= 1 && n <= pages)
-    .sort((a, b) => a - b);
-  return sorted.flatMap((n, i) =>
-    i > 0 && n - sorted[i - 1] > 1 ? [0, n] : [n],
-  );
+/** Same url with one filter toggled off (or on) and the page reset. */
+export function toggleHref(search: CatalogSearch, key: string, value: string) {
+  const next = { ...search };
+  if (next[key] === value) delete next[key];
+  else next[key] = value;
+  return catalogHref(next);
 }

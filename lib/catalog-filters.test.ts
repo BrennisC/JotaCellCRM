@@ -1,20 +1,21 @@
 import { expect, test } from "bun:test";
 import type { Variant } from "@prisma/client";
 import {
+  catalogFacets,
   catalogHref,
   cheapestPrice,
   filterCatalog,
-  pageWindow,
   sortStorages,
+  toggleHref,
   type CatalogProduct,
 } from "./catalog-filters";
+import { pageWindow } from "./pagination";
 
 let counter = 0;
 const make = (
   brand: string,
   model: string,
   variants: Partial<Variant>[],
-  condition = "Nuevo",
   createdAt = new Date(2026, 0, 1),
 ): CatalogProduct =>
   ({
@@ -24,7 +25,7 @@ const make = (
     model,
     description: "",
     warranty: "12 meses",
-    condition,
+    condition: "Nuevo",
     published: true,
     featured: false,
     images: [],
@@ -44,18 +45,14 @@ const make = (
 const products = [
   make("Samsung", "S24", [{ priceCents: 250000, stock: 2 }]),
   make("Apple", "iPhone 13", [{ priceCents: 200000, salePriceCents: 180000 }]),
-  make("Xiaomi", "Redmi 13", [{ priceCents: 80000, stock: 0 }], "Open Box"),
+  make("Xiaomi", "Redmi 13", [{ priceCents: 80000, stock: 0 }]),
   make("Apple", "iPhone 15", [{ priceCents: 420000, storage: "256 GB" }]),
 ];
 
-test("brand and condition filters narrow the catalog", () => {
+test("brand filter narrows the catalog", () => {
   expect(filterCatalog(products, { marca: "Apple" }).total).toBe(2);
-  expect(
-    filterCatalog(products, { condicion: "Open Box" }).items[0].model,
-  ).toBe("Redmi 13");
-  expect(
-    filterCatalog(products, { marca: "Apple", condicion: "Open Box" }).total,
-  ).toBe(0);
+  expect(filterCatalog(products, { marca: "Xiaomi" }).total).toBe(1);
+  expect(filterCatalog(products, { marca: "Motorola" }).total).toBe(0);
 });
 
 test("text search matches brand and model", () => {
@@ -133,4 +130,32 @@ test("storages sort by capacity, not alphabetically", () => {
     "512 GB",
     "1 TB",
   ]);
+});
+
+test("facets count every option before applying it", () => {
+  const facets = catalogFacets(products, {});
+  expect(facets.total).toBe(4);
+  expect(facets.brands).toEqual({ Samsung: 1, Apple: 2, Xiaomi: 1 });
+  expect(facets.available).toBe(3);
+  expect(facets.soldOut).toBe(1);
+  expect(facets.prices["hasta-1000"]).toBe(1);
+  expect(facets.prices["desde-3500"]).toBe(1);
+  expect(facets.storages["256 GB"]).toBe(1);
+});
+
+test("facets ignore their own dimension and respect the rest", () => {
+  const facets = catalogFacets(products, { marca: "Apple" });
+  expect(facets.total).toBe(2);
+  // Brand counts keep every brand reachable: they show what switching would give.
+  expect(facets.brands).toEqual({ Samsung: 1, Apple: 2, Xiaomi: 1 });
+  expect(facets.storages["128 GB"]).toBe(1);
+  expect(facets.rams["8 GB"]).toBe(2);
+});
+
+test("toggling a filter removes it and resets the page", () => {
+  expect(toggleHref({}, "marca", "Apple")).toBe("/celulares?marca=Apple");
+  expect(toggleHref({ marca: "Apple" }, "marca", "Apple")).toBe("/celulares");
+  expect(toggleHref({ marca: "Apple", pagina: "3" }, "ram", "8 GB")).toBe(
+    "/celulares?marca=Apple&ram=8+GB",
+  );
 });

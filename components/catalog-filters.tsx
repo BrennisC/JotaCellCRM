@@ -1,19 +1,22 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { Search, SlidersHorizontal, X } from "lucide-react";
+import { Search, X } from "lucide-react";
 import { useRef, useTransition } from "react";
 import {
-  priceRanges,
   sortOptions,
+  type CatalogFacets,
   type CatalogSearch,
 } from "@/lib/catalog-filters";
+import { CatalogChips } from "./catalog-chips";
+import { CatalogActiveFilters } from "./catalog-active-filters";
+import { CatalogAdvancedFilters } from "./catalog-advanced-filters";
 
 export function CatalogFilters({
   search,
   brands,
   rams,
   storages,
-  conditions,
+  facets,
   total,
   children,
 }: {
@@ -21,7 +24,7 @@ export function CatalogFilters({
   brands: string[];
   rams: string[];
   storages: string[];
-  conditions: string[];
+  facets: CatalogFacets;
   total: number;
   children: React.ReactNode;
 }) {
@@ -54,14 +57,6 @@ export function CatalogFilters({
     push(params);
   };
 
-  const clear = () => {
-    const alreadyClean = Object.entries(search).every(
-      ([key, field]) => key === "pagina" || !field,
-    );
-    if (alreadyClean) startTransition(() => router.refresh());
-    else push(new URLSearchParams());
-  };
-
   return (
     <form
       ref={form}
@@ -76,7 +71,7 @@ export function CatalogFilters({
     >
       <div className="catalog-toolbar">
         <div className="catalog-search">
-          <Search size={19} />
+          <Search size={19} aria-hidden="true" />
           <input
             key={`q-${value("q")}`}
             name="q"
@@ -90,110 +85,18 @@ export function CatalogFilters({
               aria-label="Borrar búsqueda"
               onClick={clearSearch}
             >
-              <X size={17} />
+              <X size={17} aria-hidden="true" />
             </button>
           )}
         </div>
-        <span className="result-count" aria-live="polite">
-          {pending
-            ? "Buscando..."
-            : `${total} ${total === 1 ? "modelo" : "modelos"}`}
-        </span>
-      </div>
-      <div className="catalog-layout">
-        <aside className="catalog-filters">
-          <h2>
-            <SlidersHorizontal size={18} /> Filtros
-          </h2>
-          <label>
-            Marca
-            <select
-              key={`marca-${value("marca")}`}
-              name="marca"
-              defaultValue={value("marca")}
-            >
-              <option value="">Todas las marcas</option>
-              {brands.map((brand) => (
-                <option key={brand} value={brand}>
-                  {brand}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label>
-            Estado del equipo
-            <select
-              key={`condicion-${value("condicion")}`}
-              name="condicion"
-              defaultValue={value("condicion")}
-            >
-              <option value="">Todos</option>
-              {conditions.map((condition) => (
-                <option key={condition} value={condition}>
-                  {condition}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label>
-            Almacenamiento
-            <select
-              key={`almacenamiento-${value("almacenamiento")}`}
-              name="almacenamiento"
-              defaultValue={value("almacenamiento")}
-            >
-              <option value="">Todos</option>
-              {storages.map((storage) => (
-                <option key={storage} value={storage}>
-                  {storage}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label>
-            Memoria RAM
-            <select
-              key={`ram-${value("ram")}`}
-              name="ram"
-              defaultValue={value("ram")}
-            >
-              <option value="">Todas</option>
-              {rams.map((ram) => (
-                <option key={ram} value={ram}>
-                  {ram}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label>
-            Precio
-            <select
-              key={`precio-${value("precio")}`}
-              name="precio"
-              defaultValue={value("precio")}
-            >
-              <option value="">Cualquier precio</option>
-              {priceRanges.map((range) => (
-                <option key={range.key} value={range.key}>
-                  {range.label}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label>
-            Disponibilidad
-            <select
-              key={`disponible-${value("disponible")}`}
-              name="disponible"
-              defaultValue={value("disponible")}
-            >
-              <option value="">Todos</option>
-              <option value="1">Disponibles</option>
-              <option value="agotado">Agotados</option>
-            </select>
-          </label>
-          <label>
-            Ordenar por
+        <div className="catalog-toolbar-meta">
+          <span className="result-count" aria-live="polite">
+            {pending
+              ? "Buscando..."
+              : `${total} ${total === 1 ? "modelo" : "modelos"}`}
+          </span>
+          <label className="catalog-sort">
+            Ordenar
             <select
               key={`orden-${value("orden", "recientes")}`}
               name="orden"
@@ -206,12 +109,17 @@ export function CatalogFilters({
               ))}
             </select>
           </label>
-          <button type="button" className="clear-filters" onClick={clear}>
-            Limpiar filtros
-          </button>
-        </aside>
-        {children}
+        </div>
       </div>
+      <CatalogChips search={search} brands={brands} facets={facets} />
+      <CatalogActiveFilters search={search} />
+      <CatalogAdvancedFilters
+        search={search}
+        storages={storages}
+        rams={rams}
+        facets={facets}
+      />
+      {children}
     </form>
   );
 }
