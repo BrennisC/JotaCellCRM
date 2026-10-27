@@ -8,7 +8,6 @@ export type InquiryDetails = {
   priceCents: number;
   storage?: string;
   color?: string;
-  condition?: string;
 };
 
 const clean = (value?: string | null) =>
@@ -36,10 +35,8 @@ export function inquiryMessage(details: InquiryDetails) {
   ];
   const storage = clean(details.storage);
   const color = clean(details.color);
-  const condition = clean(details.condition);
   if (storage) lines.push(`Almacenamiento: ${storage}`);
   if (color) lines.push(`Color: ${color}`);
-  if (condition) lines.push(`Estado: ${condition}`);
   if (clean(details.reference)) lines.push(`Ref: ${clean(details.reference)}`);
   lines.push("", "¿Cuáles son los métodos de pago y opciones de entrega?");
   return lines.join("\n");
@@ -57,7 +54,6 @@ export const inquiryFrom = (
     id: string;
     brand: string;
     model: string;
-    condition?: string | null;
   },
   variant:
     | {
@@ -77,5 +73,4 @@ export const inquiryFrom = (
   priceCents: variant?.salePriceCents ?? variant?.priceCents ?? 0,
   storage: variant?.storage,
   color: variant?.color,
-  condition: product.condition || undefined,
 });

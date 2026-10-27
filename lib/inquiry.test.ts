@@ -14,7 +14,6 @@ const details = {
   priceCents: 145000,
   storage: "128GB",
   color: "Azul",
-  condition: "Open Box",
 };
 
 test("Peruvian mobiles receive the 51 country code", () => {
@@ -31,7 +30,6 @@ test("message reflects the selected variant", () => {
   expect(message).toContain("1,450");
   expect(message).toContain("Almacenamiento: 128GB");
   expect(message).toContain("Color: Azul");
-  expect(message).toContain("Estado: Open Box");
   expect(message).toContain("Ref: cmue9mg7n0008nz010fv7naxk");
   expect(
     message.endsWith("¿Cuáles son los métodos de pago y opciones de entrega?"),
@@ -51,7 +49,6 @@ test("inquiry follows the active variant and its offer price", () => {
     id: "ref-1",
     brand: "Apple",
     model: "iPhone 13",
-    condition: "Open Box",
   };
   const base = {
     storage: "128GB",

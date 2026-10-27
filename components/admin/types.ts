@@ -18,7 +18,6 @@ export type Product = {
   model: string;
   description: string;
   warranty: string;
-  condition: string;
   published: boolean;
   featured: boolean;
   images: string[];

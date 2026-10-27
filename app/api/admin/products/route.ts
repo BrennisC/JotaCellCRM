@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { guarded, InputError, required } from "@/lib/api";
-import { defaultCondition, isCondition } from "@/lib/conditions";
+
 import { validImageUrl } from "@/lib/r2";
 import { variantValues } from "@/lib/variant-input";
 
@@ -52,7 +52,6 @@ export async function POST(request: NextRequest) {
       model: required(d.model, "Modelo"),
       description: String(d.description || ""),
       warranty: String(d.warranty || "12 meses"),
-      condition: isCondition(d.condition) ? d.condition : defaultCondition,
       featured: d.featured === true,
       published: d.published === true,
       images: d.images as Prisma.InputJsonValue,

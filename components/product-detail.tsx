@@ -186,7 +186,6 @@ export function ProductDetail({
           <div className="warranty-note">
             <ShieldCheck size={19} />
             <span>
-              Estado: <strong>{product.condition || "Nuevo"}</strong> ·
               Garantía: <strong>{product.warranty}</strong>
             </span>
           </div>

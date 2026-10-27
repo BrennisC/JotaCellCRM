@@ -51,7 +51,7 @@ export function CatalogChips({
 
   return (
     <div className="catalog-chips">
-      {(facets.available > 0 || available) && (
+      {facets.soldOut > 0 && (
         <ChipRow label="Disponibilidad">
           <Link
             href={toggleHref(search, "disponible", "1")}
@@ -60,7 +60,6 @@ export function CatalogChips({
           >
             <Check size={15} aria-hidden="true" />
             Disponibles
-            <span className="chip-count">{facets.available}</span>
           </Link>
         </ChipRow>
       )}

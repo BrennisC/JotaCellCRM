@@ -6,7 +6,7 @@ import type { Product } from "./types";
 import { Actions, Field } from "./form-parts";
 import { FirstVariantFields } from "./first-variant-fields";
 import { specFields } from "@/lib/spec-fields";
-import { conditions } from "@/lib/conditions";
+
 import { fetchWithAuth } from "@/lib/client-auth";
 
 export function ProductForm({
@@ -113,15 +113,6 @@ export function ProductForm({
             name="warranty"
             defaultValue={product?.warranty || "12 meses"}
           />
-        </Field>
-        <Field label="Estado del equipo">
-          <select name="condition" defaultValue={product?.condition || "Nuevo"}>
-            {conditions.map((condition) => (
-              <option key={condition} value={condition}>
-                {condition}
-              </option>
-            ))}
-          </select>
         </Field>
         <Field label="Descripción">
           <textarea
