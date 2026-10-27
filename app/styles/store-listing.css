@@ -180,3 +180,46 @@
   font-size: 13px;
   overflow-wrap: anywhere;
 }
+
+.catalog-pager {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  margin-top: 38px;
+}
+.catalog-pager a,
+.catalog-pager span {
+  min-width: 40px;
+  height: 40px;
+  padding: 0 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.catalog-pager a:hover {
+  background: #f4f8f3;
+}
+.catalog-pager a.active {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: #fff;
+}
+.catalog-pager .disabled {
+  color: #c4ccc6;
+  background: #fafbf9;
+}
+.catalog-pager .gap {
+  min-width: 18px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #a0aaa1;
+}

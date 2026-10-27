@@ -58,26 +58,27 @@ export async function POST(request: NextRequest) {
       images: d.images as Prisma.InputJsonValue,
       specs: specs as Prisma.InputJsonValue,
     };
-    const product = d.id
-      ? await prisma.product.update({
-          where: { id: String(d.id) },
-          data: values,
-        })
-      : await prisma.product.create({ data: values });
     const quick =
       d.variant && typeof d.variant === "object" && !Array.isArray(d.variant)
         ? variantValues(d.variant as Record<string, unknown>)
         : null;
-    const hasVariants =
-      (await prisma.variant.count({
-        where: { productId: product.id },
-      })) > 0;
-    const newVariant =
-      quick && !hasVariants
-        ? await prisma.variant.create({
-            data: { productId: product.id, ...quick },
+    const [product, newVariant] = await prisma.$transaction(async (tx) => {
+      const saved = d.id
+        ? await tx.product.update({
+            where: { id: String(d.id) },
+            data: values,
           })
-        : null;
+        : await tx.product.create({ data: values });
+      const hasVariants =
+        (await tx.variant.count({ where: { productId: saved.id } })) > 0;
+      const variant =
+        quick && !hasVariants
+          ? await tx.variant.create({
+              data: { productId: saved.id, ...quick },
+            })
+          : null;
+      return [saved, variant] as const;
+    });
     const legacyIds = (d.images as string[])
       .filter((url) => url.startsWith("/api/images/"))
       .map((url) => url.split("/").pop()!);
