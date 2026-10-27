@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
-import { guarded, InputError, integer, required } from "@/lib/api";
-import { toCents } from "@/lib/finance";
+import { guarded, InputError, required } from "@/lib/api";
 import { defaultCondition, isCondition } from "@/lib/conditions";
 import { validImageUrl } from "@/lib/r2";
+import { variantValues } from "@/lib/variant-input";
 
 export const runtime = "nodejs";
 const allowedSpecs = [
@@ -64,6 +64,20 @@ export async function POST(request: NextRequest) {
           data: values,
         })
       : await prisma.product.create({ data: values });
+    const quick =
+      d.variant && typeof d.variant === "object" && !Array.isArray(d.variant)
+        ? variantValues(d.variant as Record<string, unknown>)
+        : null;
+    const hasVariants =
+      (await prisma.variant.count({
+        where: { productId: product.id },
+      })) > 0;
+    const newVariant =
+      quick && !hasVariants
+        ? await prisma.variant.create({
+            data: { productId: product.id, ...quick },
+          })
+        : null;
     const legacyIds = (d.images as string[])
       .filter((url) => url.startsWith("/api/images/"))
       .map((url) => url.split("/").pop()!);
@@ -84,6 +98,19 @@ export async function POST(request: NextRequest) {
           entityId: product.id,
         },
       }),
+      ...(newVariant
+        ? [
+            prisma.auditLog.create({
+              data: {
+                adminId,
+                action: "variant.created",
+                entity: "variant",
+                entityId: newVariant.id,
+                detail: { stock: newVariant.stock },
+              },
+            }),
+          ]
+        : []),
     ]);
     return NextResponse.json({ id: product.id });
   });
@@ -93,26 +120,7 @@ export async function PATCH(request: NextRequest) {
   return guarded(request, async (adminId) => {
     const d = await request.json();
     const productId = required(d.productId, "Producto");
-    const values = {
-      color: required(d.color, "Color"),
-      colorHex: /^#[0-9a-fA-F]{6}$/.test(String(d.colorHex))
-        ? String(d.colorHex)
-        : "#dceaf4",
-      ram: required(d.ram, "RAM"),
-      storage: required(d.storage, "Almacenamiento"),
-      priceCents: toCents(d.price),
-      salePriceCents: d.salePrice ? toCents(d.salePrice) : null,
-      stock: integer(d.stock, "Stock"),
-    };
-    if (
-      values.priceCents <= 0 ||
-      (values.salePriceCents !== null &&
-        (values.salePriceCents <= 0 ||
-          values.salePriceCents >= values.priceCents))
-    )
-      throw new InputError(
-        "Precios inválidos. La oferta debe ser menor que el precio regular.",
-      );
+    const values = variantValues(d);
     const variant = d.id
       ? await prisma.variant.update({
           where: { id: String(d.id), productId },

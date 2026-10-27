@@ -4,6 +4,7 @@ import Image from "next/image";
 import { ImagePlus, Trash2 } from "lucide-react";
 import type { Product } from "./types";
 import { Actions, Field } from "./form-parts";
+import { FirstVariantFields } from "./first-variant-fields";
 import { specFields } from "@/lib/spec-fields";
 import { conditions } from "@/lib/conditions";
 import { fetchWithAuth } from "@/lib/client-auth";
@@ -53,6 +54,7 @@ export function ProductForm({
         setBusy(true);
         setError("");
         const values = Object.fromEntries(new FormData(e.currentTarget));
+        const first = !product?.variants.length;
         try {
           await onSubmit({
             ...values,
@@ -61,6 +63,16 @@ export function ProductForm({
             published: values.published === "on",
             images,
             specs,
+            variant: first
+              ? {
+                  storage: values.storage,
+                  color: values.color,
+                  ram: values.ram,
+                  price: values.price,
+                  salePrice: values.salePrice,
+                  stock: values.stock,
+                }
+              : undefined,
           });
           onClose();
         } catch (e) {
@@ -207,6 +219,7 @@ export function ProductForm({
           </details>
         ))}
       </div>
+      {!product?.variants.length && <FirstVariantFields />}
       <div className="admin-switches">
         <label>
           <input
