@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title">
+  <title id="title">JOTACELL JC</title>
+  <defs>
+    <linearGradient id="gold" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#fff0a2"/>
+      <stop offset=".5" stop-color="#ffc247"/>
+      <stop offset="1" stop-color="#e88719"/>
+    </linearGradient>
+    <linearGradient id="silver" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#fafaf8"/>
+      <stop offset="1" stop-color="#aebdd1"/>
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" rx="28" fill="#08172d"/>
+  <circle cx="64" cy="64" r="54" fill="none" stroke="url(#gold)" stroke-width="3"/>
+  <circle cx="64" cy="64" r="48" fill="none" stroke="#2d75eb" stroke-opacity=".8" stroke-width="1"/>
+  <path d="M14 64h13m-9-8h9m-9 16h9m74-8h13m-13-8h9m-9 16h9" stroke="url(#gold)" stroke-width="2" stroke-linecap="round"/>
+  <text x="43" y="84" text-anchor="middle" fill="url(#silver)" font-family="Inter,Arial,sans-serif" font-size="58" font-weight="800" letter-spacing="-6">J</text>
+  <text x="80" y="84" text-anchor="middle" fill="url(#gold)" font-family="Inter,Arial,sans-serif" font-size="58" font-weight="800" letter-spacing="-5">C</text>
+  <path d="M48 99h32" stroke="url(#gold)" stroke-width="2" stroke-linecap="round"/>
+</svg>

@@ -1,0 +1,230 @@
+.benefits-bar {
+  border-bottom: 1px solid #eaece9;
+  background: #fff;
+}
+.benefits-inner {
+  min-height: 104px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  align-items: center;
+}
+.benefits-inner > div {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  justify-content: center;
+  color: #8aab98;
+  border-right: 1px solid #e9ede9;
+}
+.benefits-inner > div:last-child {
+  border: 0;
+}
+.benefits-inner strong,
+.benefits-inner small {
+  display: block;
+}
+.benefits-inner strong {
+  font-size: 12px;
+  color: #4c5654;
+}
+.benefits-inner small {
+  font-size: 11px;
+  color: #a5ada9;
+  margin-top: 5px;
+}
+.store-section {
+  padding-top: 106px;
+  padding-bottom: 96px;
+}
+.section-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 30px;
+  margin-bottom: 37px;
+}
+.section-top h2,
+.feature-copy h2,
+.contact-banner h2 {
+  font-size: clamp(36px, 4vw, 54px);
+  line-height: 1.14;
+  letter-spacing: -0.06em;
+  margin: 15px 0 10px;
+  font-weight: 700;
+}
+.section-top p {
+  color: #9ca49e;
+  font-size: 14px;
+  margin: 0;
+}
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px;
+}
+.product-card {
+  min-width: 0;
+  border: 1px solid #ebede9;
+  border-radius: 19px;
+  overflow: hidden;
+  background: #fff;
+  transition:
+    transform 0.25s,
+    box-shadow 0.25s;
+}
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 16px 35px #404f4112;
+}
+.product-visual {
+  height: 260px;
+  background: #eff3f2;
+  display: grid;
+  place-items: center;
+  position: relative;
+  overflow: hidden;
+}
+.product-card:nth-child(4n + 2) .product-visual {
+  background: #f1ecf3;
+}
+.product-card:nth-child(4n + 3) .product-visual {
+  background: #f1f2e9;
+}
+.product-card:nth-child(4n + 4) .product-visual {
+  background: #eaf0f4;
+}
+.product-visual .phone-art {
+  transform: scale(0.55);
+  transform-origin: center;
+}
+.product-photo {
+  width: 80%;
+  height: 88%;
+  object-fit: contain;
+  filter: drop-shadow(0 12px 15px #26362c24);
+}
+.sale-tag {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  background: #f5e6e8;
+  padding: 8px 11px;
+  color: #9f7881;
+  border-radius: 8px;
+  font-size: 10px;
+  font-weight: 800;
+}
+.card-arrow {
+  position: absolute;
+  right: 15px;
+  top: 15px;
+  width: 31px;
+  height: 31px;
+  display: grid;
+  place-items: center;
+  background: #fff;
+  border-radius: 50%;
+  color: #5e7066;
+}
+.product-content {
+  padding: 20px 20px 22px;
+}
+.product-brand {
+  font-size: 10px;
+  font-weight: 800;
+  color: #94ae9e;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+.product-content h3 {
+  font-size: 17px;
+  letter-spacing: -0.03em;
+  margin: 7px 0 13px;
+}
+.product-meta {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  color: #9a9f9d;
+  font-size: 11px;
+  border-bottom: 1px solid #eef0ed;
+  padding-bottom: 17px;
+}
+.product-meta span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.product-bottom {
+  padding-top: 15px;
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 4px;
+}
+.product-bottom small {
+  font-size: 9px;
+  color: #9ca7a2;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+  display: block;
+  margin-bottom: 3px;
+}
+.product-bottom strong {
+  display: block;
+  font-size: 18px;
+  letter-spacing: -0.04em;
+}
+.product-bottom del {
+  display: block;
+  color: #a8aca9;
+  font-size: 11px;
+  margin-top: 3px;
+}
+.stock-label {
+  font-size: 10px;
+  color: #698f78;
+  white-space: nowrap;
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+.stock-label span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #a6c8b1;
+}
+.stock-label.sold-out {
+  color: #aa8a91;
+}
+.stock-label.sold-out span {
+  background: #e0b9c1;
+}
+.catalog-empty {
+  grid-column: 1/-1;
+  border: 1px dashed #d9e4dc;
+  background: #f7faf7;
+  padding: 70px 20px;
+  text-align: center;
+  border-radius: 20px;
+  color: #84938a;
+}
+.catalog-empty-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 18px;
+  background: #e8f2ea;
+  display: grid;
+  place-items: center;
+  margin: auto;
+  color: #8cab99;
+}
+.catalog-empty h3 {
+  font-size: 18px;
+  color: #4d5b53;
+  margin: 19px 0 7px;
+}
+.catalog-empty p {
+  font-size: 13px;
+}

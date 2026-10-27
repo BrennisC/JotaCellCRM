@@ -1,0 +1,245 @@
+@media (max-width: 1100px) {
+  .desktop-links {
+    gap: 18px;
+  }
+  .product-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .catalog-products {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .contact-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .hero h1 {
+    font-size: 65px;
+  }
+}
+@media (max-width: 800px) {
+  .announcement {
+    font-size: 10px;
+  }
+  .header-inner {
+    height: 66px;
+  }
+  .desktop-links,
+  .header-contact {
+    display: none;
+  }
+  .mobile-menu {
+    display: block;
+    margin-left: auto;
+    position: relative;
+  }
+  .mobile-menu summary {
+    list-style: none;
+    cursor: pointer;
+  }
+  .mobile-menu summary::-webkit-details-marker {
+    display: none;
+  }
+  .mobile-menu nav {
+    position: absolute;
+    right: 0;
+    top: 43px;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 13px;
+    box-shadow: 0 15px 30px #40504616;
+    width: 190px;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    z-index: 30;
+  }
+  .mobile-menu nav a {
+    padding: 11px;
+    font-size: 13px;
+  }
+  .hero-inner {
+    min-height: auto;
+    display: flex;
+    flex-direction: column;
+  }
+  .hero-text {
+    padding: 70px 0 10px;
+    width: 100%;
+  }
+  .hero h1 {
+    font-size: clamp(55px, 11vw, 80px);
+  }
+  .hero-image {
+    min-height: 390px;
+    width: 100%;
+  }
+  .hero-image .phone-art {
+    transform: rotate(-13deg) scale(0.85);
+    margin: 0;
+  }
+  .circle-a {
+    width: 330px;
+    height: 330px;
+    top: 8%;
+    left: calc(50% - 165px);
+  }
+  .circle-b {
+    width: 240px;
+    height: 240px;
+    top: 20%;
+    left: calc(50% - 120px);
+  }
+  .floating-note {
+    bottom: 35px;
+    right: 0;
+  }
+  .hero-side-text {
+    display: none;
+  }
+  .hero-buttons {
+    margin: 27px 0;
+  }
+  .hero-note {
+    display: none;
+  }
+  .benefits-inner {
+    grid-template-columns: 1fr;
+    gap: 0;
+    padding: 12px 0;
+  }
+  .benefits-inner > div {
+    padding: 12px 0;
+    border-right: 0;
+    justify-content: start;
+  }
+  .store-section {
+    padding-top: 70px;
+    padding-bottom: 70px;
+  }
+  .section-top {
+    align-items: start;
+    flex-direction: column;
+    gap: 13px;
+  }
+  .product-grid,
+  .catalog-products {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+  .product-visual {
+    height: 220px;
+  }
+  .product-content {
+    padding: 15px;
+  }
+  .product-meta {
+    gap: 6px;
+  }
+  .product-bottom {
+    align-items: start;
+    flex-direction: column;
+    gap: 7px;
+  }
+  .feature-inner {
+    display: flex;
+    flex-direction: column;
+  }
+  .feature-visual {
+    height: 330px;
+    width: 100%;
+  }
+  .feature-visual:before {
+    width: 260px;
+    height: 260px;
+  }
+  .feature-visual .phone-art {
+    transform: rotate(16deg) scale(0.65);
+  }
+  .feature-copy {
+    padding: 10px 0 65px;
+    width: 100%;
+  }
+  .brand-grid,
+  .brands-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .contact-banner {
+    padding: 40px 25px;
+    min-height: 0;
+    margin-bottom: 65px;
+    flex-direction: column;
+    align-items: start;
+    gap: 20px;
+  }
+  .contact-banner h2 {
+    font-size: 32px;
+  }
+  .footer-columns {
+    grid-template-columns: 1fr 1fr;
+    gap: 35px;
+  }
+  .footer-about {
+    grid-column: 1/-1;
+  }
+  .listing-page,
+  .simple-page {
+    padding-top: 55px;
+    padding-bottom: 70px;
+  }
+  .catalog-layout {
+    display: block;
+  }
+  .catalog-filters {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0 14px;
+    margin-bottom: 20px;
+  }
+  .catalog-filters h2 {
+    grid-column: 1/-1;
+  }
+  .catalog-filters .clear-filters {
+    grid-column: 1/-1;
+    text-align: left;
+  }
+}
+@media (max-width: 520px) {
+  .hero-buttons {
+    flex-wrap: wrap;
+  }
+  .hero-buttons a {
+    flex: 1;
+  }
+  .product-visual {
+    height: 175px;
+  }
+  .product-visual .phone-art {
+    transform: scale(0.41);
+  }
+  .product-content h3 {
+    font-size: 14px;
+  }
+  .product-meta {
+    font-size: 10px;
+  }
+  .product-bottom strong {
+    font-size: 16px;
+  }
+  .brand-grid,
+  .brands-list,
+  .contact-grid {
+    grid-template-columns: 1fr;
+  }
+  .brand-tile {
+    min-height: 85px;
+  }
+  .footer-bottom {
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .catalog-filters {
+    grid-template-columns: 1fr 1fr;
+  }
+  .contact-banner h2 {
+    font-size: 30px;
+  }
+}

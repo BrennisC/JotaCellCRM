@@ -1,0 +1,151 @@
+.phone-art {
+  width: 235px;
+  height: 385px;
+  position: relative;
+  flex-shrink: 0;
+}
+.phone-shadow {
+  position: absolute;
+  width: 190px;
+  height: 35px;
+  bottom: -14px;
+  left: 30px;
+  background: #8da49955;
+  filter: blur(25px);
+  border-radius: 50%;
+}
+.phone-back,
+.phone-front {
+  position: absolute;
+  width: 184px;
+  height: 360px;
+  border-radius: 31px;
+  box-shadow:
+    inset 3px 0 4px #ffffff99,
+    inset -3px 0 4px #778e7d66,
+    12px 16px 28px #4a685552;
+  border: 5px solid #b4c8bb;
+  overflow: hidden;
+}
+.phone-back {
+  left: 0;
+  top: 10px;
+  transform: rotate(-11deg);
+  background: linear-gradient(125deg, #eef4e7, #b8d1c0 65%, #dcebe1);
+}
+.phone-front {
+  right: 0;
+  top: 0;
+  transform: rotate(9deg);
+  background: linear-gradient(145deg, #e9f2e8, #a8c9b6 45%, #748f82);
+  border-color: #647b70;
+  overflow: hidden;
+}
+.phone-front:after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(125deg, #fff7, transparent 42%);
+  pointer-events: none;
+}
+.phone-speaker {
+  position: absolute;
+  top: 9px;
+  left: 63px;
+  width: 43px;
+  height: 11px;
+  border-radius: 10px;
+  background: #4d6459;
+  z-index: 3;
+}
+.camera-island {
+  width: 88px;
+  height: 93px;
+  background: #cfdfd1aa;
+  border: 2px solid #f5faf399;
+  border-radius: 22px;
+  margin: 17px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  padding: 10px;
+  gap: 6px;
+}
+.camera-island i {
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    #445951 0 20%,
+    #93a79c 23% 39%,
+    #344a42 43% 65%,
+    #b4c8b9 70%
+  );
+  border: 2px solid #e5f2e6;
+}
+.camera-island i:last-child {
+  width: 17px;
+  height: 17px;
+  margin: 7px;
+  background: #e5e5db;
+}
+.phone-mark {
+  position: absolute;
+  top: 60%;
+  left: 42%;
+  width: 27px;
+  height: 27px;
+  border: 2px solid #ffffffa8;
+  border-radius: 50%;
+}
+.wallpaper-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(1px);
+}
+.wallpaper-blob.one {
+  width: 230px;
+  height: 300px;
+  background: #ddeee4;
+  top: 82px;
+  left: -120px;
+  transform: rotate(-40deg);
+}
+.wallpaper-blob.two {
+  width: 180px;
+  height: 300px;
+  background: #b5d7c4;
+  right: -85px;
+  top: 10px;
+  transform: rotate(-20deg);
+}
+.wallpaper-blob.three {
+  width: 130px;
+  height: 290px;
+  background: #8cae9d;
+  bottom: -120px;
+  left: 45px;
+  transform: rotate(30deg);
+}
+.art-blue .phone-back {
+  background: linear-gradient(140deg, #f1f8fa, #bcd7e7);
+}
+.art-blue .phone-front {
+  background: linear-gradient(150deg, #dbeef1, #8bacbc);
+}
+.art-blue .wallpaper-blob.one {
+  background: #e4f0f6;
+}
+.art-blue .wallpaper-blob.two {
+  background: #afcfdc;
+}
+.art-lavender .phone-back {
+  background: linear-gradient(130deg, #faf6fb, #d3c7e4);
+}
+.art-lavender .phone-front {
+  background: linear-gradient(140deg, #f2eafa, #bdabc9);
+}
+.art-lavender .wallpaper-blob.one {
+  background: #ede6f6;
+}
+.art-lavender .wallpaper-blob.two {
+  background: #cebcdc;
+}

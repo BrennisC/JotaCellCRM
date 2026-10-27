@@ -1,0 +1,248 @@
+:root {
+  --brand-navy: #08172d;
+  --brand-blue: #2d75eb;
+  --brand-blue-soft: #e8f0ff;
+  --brand-gold: #ffc247;
+  --brand-gold-soft: #fff4d8;
+  --brand-silver: #dce6f4;
+}
+.announcement {
+  background: var(--brand-navy);
+  color: #dce5f0;
+}
+.announcement span {
+  color: var(--brand-gold);
+}
+.logo,
+.admin-logo > a {
+  color: var(--brand-navy);
+}
+.logo-symbol {
+  background: var(--brand-blue-soft);
+  color: var(--brand-navy);
+  border-color: #d5e1ee;
+}
+.logo i,
+.admin-logo i {
+  color: var(--brand-gold);
+}
+.header-contact {
+  border-color: #d8e2ef;
+  color: var(--brand-navy);
+}
+.header-contact:hover {
+  background: var(--brand-blue-soft);
+}
+.desktop-links a:hover,
+.section-link:hover {
+  color: var(--brand-blue);
+}
+.hero {
+  background:
+    radial-gradient(circle at 81% 46%, #bed5ff 0, transparent 37%),
+    linear-gradient(110deg, #fafaf8 2%, #edf3ff 53%, #dfeaff 100%);
+}
+.hero h1,
+.simple-page h1 {
+  color: var(--brand-navy);
+}
+.hero h1 em,
+.section-top h2 em,
+.contact-banner h2 em,
+.simple-page h1 em,
+.listing-heading h1 em {
+  color: #2d75eb;
+}
+.hero-circle.circle-a {
+  background: #d1e2ff;
+}
+.hero-circle.circle-b {
+  border-color: #ffffffa6;
+}
+.hero-note .mini-avatars span:nth-child(3),
+.floating-icon {
+  background: var(--brand-gold-soft);
+  color: #a36c00;
+}
+.button-dark,
+.admin-primary {
+  background: #1d5fce;
+  border-color: #1d5fce;
+  box-shadow: 0 9px 22px #2d75eb24;
+}
+.button-dark:hover,
+.admin-primary:hover {
+  background: #2d75eb;
+  border-color: #2d75eb;
+}
+.button-soft:hover {
+  background: var(--brand-blue-soft);
+}
+.eyebrow {
+  color: #3469af;
+}
+.eyebrow > span {
+  background: var(--brand-gold);
+}
+.hero-image .phone-back {
+  background: linear-gradient(140deg, #ffffff, #a9c5ed 68%, #dceaff);
+  border-color: #9ebce5;
+}
+.hero-image .phone-front {
+  background: linear-gradient(145deg, #e8f1ff, #528de5 62%, #1744a0);
+  border-color: #385eab;
+}
+.hero-image .wallpaper-blob.one {
+  background: #e8f0fb;
+}
+.hero-image .wallpaper-blob.two {
+  background: #79aaf4;
+}
+.hero-image .wallpaper-blob.three {
+  background: #265bc4;
+}
+.benefits-inner > div {
+  color: #829fc1;
+}
+.product-visual {
+  background: #edf2f8;
+}
+.product-card:nth-child(4n + 2) .product-visual {
+  background: #f4f0f8;
+}
+.product-card:nth-child(4n + 3) .product-visual {
+  background: #f6f2e9;
+}
+.product-card:nth-child(4n + 4) .product-visual {
+  background: #e9f0f5;
+}
+.product-brand,
+.feature-copy h2 em,
+.spec-group h3 {
+  color: #2d70d4;
+}
+.brand-monogram,
+.catalog-empty-icon,
+.contact-tile > span {
+  background: var(--brand-blue-soft);
+  color: #2d70d4;
+}
+.feature-strip {
+  background: #eef1f8;
+}
+.feature-visual:before {
+  background: #e1e7f2;
+}
+.feature-spark {
+  color: #ffce69;
+}
+.contact-banner {
+  background: #e9eff7;
+}
+.banner-asterisk {
+  color: #dce7f4;
+}
+.store-footer {
+  background: #eff2f7;
+}
+.footer-bottom {
+  border-color: #dee5ee;
+}
+.catalog-empty {
+  background: #f7f9fc;
+  border-color: #dbe5ef;
+}
+.choice-options button.chosen {
+  background: var(--brand-blue-soft);
+  border-color: #75a3ed;
+  color: #1d5fce;
+}
+.color-option.chosen {
+  border-color: #2d75eb;
+}
+.gallery-stage {
+  background: linear-gradient(145deg, #eef3f9, #e4ebf4);
+}
+.gallery-thumbs button.active {
+  border-color: #2d75eb;
+}
+.spec-header {
+  background: var(--brand-blue-soft);
+}
+.spec-header > span {
+  color: #2d70d4;
+}
+.admin-nav button.active {
+  background: var(--brand-blue-soft);
+  color: #195bbf;
+}
+.admin-welcome {
+  background: linear-gradient(110deg, #eaf1f8, #e2ebf7);
+}
+.admin-welcome h2 em {
+  color: #286bd7;
+}
+.admin-welcome > div > span,
+.admin-welcome button {
+  color: #286bd7;
+}
+.welcome-star {
+  color: #d7e4f3;
+}
+.admin-bottom-nav button.active {
+  color: #2469d8;
+}
+.login-art {
+  background: #eaf1f8;
+}
+.login-art-copy h1 {
+  color: var(--brand-navy);
+}
+.login-art-copy h1 em {
+  color: #2d75eb;
+}
+.login-art-star {
+  color: #dce7f5;
+}
+.login-lock {
+  background: var(--brand-blue-soft);
+  color: #2d75eb;
+}
+.admin-switches input {
+  accent-color: #2d75eb;
+}
+.admin-field input:focus,
+.admin-field textarea:focus,
+.admin-field select:focus {
+  border-color: #2d75eb;
+}
+.sale-tag {
+  background: var(--brand-gold-soft);
+  color: #865500;
+}
+.card-arrow {
+  color: #1c5bbf;
+}
+.brand-tile:hover,
+.brands-list > a:hover {
+  border-color: #95b9f4;
+}
+.stat-icon.blue {
+  background: var(--brand-blue-soft);
+  color: #286bd7;
+}
+.admin-chart-foot,
+.admin-text-btn {
+  color: #2d70d4;
+}
+.admin-nav button:hover {
+  color: #1d5fce;
+}
+.detail-brand span {
+  background: var(--brand-gold-soft);
+  color: #936100;
+}
+.back-link:hover,
+.clear-filters:hover {
+  color: #2469d8;
+}

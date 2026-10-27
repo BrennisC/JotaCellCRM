@@ -1,0 +1,263 @@
+.detail-gallery {
+  min-width: 0;
+}
+.gallery-stage {
+  height: 640px;
+  background: linear-gradient(145deg, #ebf2ef, #e7eee9);
+  border-radius: 19px;
+  display: grid;
+  place-items: center;
+  position: relative;
+  overflow: hidden;
+}
+.gallery-main-image {
+  max-width: 90%;
+  max-height: 86%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 24px 22px #345a3b24);
+}
+.gallery-stage .phone-art {
+  transform: scale(1.13);
+}
+.expand-btn,
+.gallery-arrow {
+  position: absolute;
+  border: 0;
+  background: #ffffffdc;
+  color: #708678;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 4px 20px #344c3b18;
+}
+.expand-btn {
+  top: 17px;
+  right: 17px;
+}
+.gallery-arrow {
+  top: 50%;
+  transform: translateY(-50%);
+}
+.gallery-arrow.left {
+  left: 14px;
+}
+.gallery-arrow.right {
+  right: 14px;
+}
+.gallery-count {
+  position: absolute;
+  bottom: 19px;
+  right: 20px;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: #89998d;
+  font-weight: 700;
+}
+.gallery-thumbs {
+  display: flex;
+  gap: 9px;
+  overflow-x: auto;
+  padding: 15px 0;
+}
+.gallery-thumbs button {
+  width: 73px;
+  flex: 0 0 73px;
+  border: 1px solid #e6eae5;
+  border-radius: 9px;
+  padding: 6px;
+  background: white;
+  color: #a1a9a3;
+  font-size: 9px;
+}
+.gallery-thumbs button.active {
+  border-color: #9cbcaa;
+}
+.gallery-thumbs img {
+  height: 61px;
+  width: 100%;
+  object-fit: contain;
+  display: block;
+}
+.gallery-thumbs span {
+  display: block;
+  padding: 4px 0;
+}
+.gallery-no-images {
+  font-size: 11px;
+  color: #9ba89f;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px;
+}
+.spec-panel {
+  background: #fff;
+  border: 1px solid #ebeee9;
+  border-radius: 18px;
+  min-height: 640px;
+  max-height: 729px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.spec-header {
+  background: #edf4ee;
+  padding: 27px 27px 22px;
+}
+.spec-header > span {
+  font-size: 9px;
+  letter-spacing: 0.13em;
+  color: #98ae9e;
+  font-weight: 800;
+}
+.spec-header h2 {
+  font-size: 16px;
+  letter-spacing: 0.07em;
+  margin: 9px 0 4px;
+}
+.spec-header p {
+  font-size: 11px;
+  color: #a1aaa2;
+  margin: 0;
+}
+.spec-scroll {
+  overflow: auto;
+  padding: 0 27px;
+}
+.spec-group {
+  padding: 22px 0 16px;
+  border-bottom: 1px solid #edf0ec;
+}
+.spec-group:last-child {
+  border: 0;
+}
+.spec-group h3 {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: #8eae98;
+  margin: 0 0 15px;
+}
+.spec-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 15px;
+  font-size: 10px;
+  margin-bottom: 13px;
+}
+.spec-row span {
+  color: #a3aaa4;
+}
+.spec-row strong {
+  text-align: right;
+  color: #5e6962;
+  font-weight: 600;
+  max-width: 58%;
+  line-height: 1.45;
+}
+.detail-bottom-note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: #93a096;
+  margin-top: 35px;
+}
+.zoom-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: #202b26eb;
+  display: grid;
+  place-items: center;
+  padding: 45px;
+}
+.zoom-overlay img {
+  max-height: 90vh;
+  max-width: 90vw;
+  object-fit: contain;
+}
+.zoom-overlay > button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  border: 0;
+  background: white;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+}
+.zoom-overlay .phone-art {
+  transform: scale(1.5);
+}
+@media (max-width: 1120px) {
+  .detail-layout {
+    grid-template-columns: 1fr 1fr;
+  }
+  .spec-panel {
+    grid-column: 1/-1;
+    min-height: 0;
+    max-height: none;
+  }
+  .spec-scroll {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0 24px;
+  }
+  .gallery-stage {
+    height: 590px;
+  }
+}
+@media (max-width: 720px) {
+  .detail-page {
+    padding-top: 17px;
+  }
+  .detail-breadcrumb {
+    margin-bottom: 14px;
+  }
+  .detail-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+  .detail-gallery {
+    order: 1;
+    width: 100%;
+  }
+  .detail-commercial {
+    order: 2;
+    padding: 0;
+    width: 100%;
+  }
+  .spec-panel {
+    order: 3;
+    width: 100%;
+  }
+  .detail-commercial .back-link {
+    margin-bottom: 20px;
+  }
+  .gallery-stage {
+    height: 440px;
+  }
+  .gallery-stage .phone-art {
+    transform: scale(0.84);
+  }
+  .detail-commercial h1 {
+    font-size: 45px;
+  }
+  .spec-scroll {
+    grid-template-columns: 1fr;
+  }
+  .detail-price strong {
+    font-size: 29px;
+  }
+  .spec-panel {
+    max-height: none;
+  }
+}

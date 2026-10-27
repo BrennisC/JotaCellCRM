@@ -1,0 +1,250 @@
+.admin-search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #fff;
+  border: 1px solid #e9ede8;
+  border-radius: 10px;
+  width: min(410px, 100%);
+  padding: 0 15px;
+  margin-bottom: 20px;
+  color: #a3b1a5;
+}
+.admin-search input {
+  height: 43px;
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: none;
+  outline: 0;
+  font-size: 11px;
+}
+.table-panel {
+  padding: 21px;
+}
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 7px;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 7px 9px;
+  white-space: nowrap;
+}
+.status-pill.green {
+  background: #e9f4eb;
+  color: #7ba183;
+}
+.status-pill.blue {
+  background: #e8f2f7;
+  color: #7b9fae;
+}
+.status-pill.red {
+  background: #f7e9eb;
+  color: #af838b;
+}
+.status-pill.neutral {
+  background: #f0f2ef;
+  color: #98a298;
+}
+.admin-product-row,
+.inventory-row,
+.sale-row,
+.installment-admin-row,
+.report-row {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px 0;
+  border-top: 1px solid #f0f2ef;
+  min-width: 0;
+}
+.admin-product-thumb {
+  width: 52px;
+  height: 52px;
+  border-radius: 9px;
+  background: #edf3ef;
+  display: grid;
+  place-items: center;
+  flex: none;
+  color: #91aa99;
+}
+.admin-product-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.admin-row-main {
+  flex: 1;
+  min-width: 0;
+}
+.admin-row-main strong,
+.admin-row-main small {
+  display: block;
+}
+.admin-row-main strong {
+  font-size: 11px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.admin-row-main small {
+  font-size: 10px;
+  color: #a4aea5;
+  margin-top: 6px;
+}
+.admin-row-price {
+  font-size: 11px;
+  font-weight: 700;
+  min-width: 96px;
+}
+.admin-row-price small {
+  display: block;
+  color: #a4aea5;
+  font-size: 10px;
+  font-weight: 400;
+  margin-top: 5px;
+}
+.admin-row-actions {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.admin-row-actions button {
+  border: 0;
+  background: #f6f8f5;
+  border-radius: 8px;
+  color: #879a89;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+}
+.admin-row-actions button:hover {
+  background: #e7f1e9;
+}
+.inventory-row > strong {
+  font-size: 11px;
+}
+.sale-row {
+  width: 100%;
+  background: none;
+  border-right: 0;
+  border-left: 0;
+  border-bottom: 0;
+  text-align: left;
+  color: inherit;
+}
+.sale-row:hover {
+  background: #fafcf9;
+}
+.sale-row > strong {
+  font-size: 12px;
+}
+.sale-row > svg {
+  color: #a1b0a4;
+}
+.installment-index {
+  background: #ecf2ed;
+  border-radius: 8px;
+  color: #8aaa91;
+  width: 37px;
+  height: 37px;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  font-weight: 700;
+  flex: none;
+}
+.filter-select {
+  border: 1px solid #e7ece7;
+  background: #fff;
+  border-radius: 8px;
+  padding: 9px;
+  color: #7f8e80;
+  font-size: 11px;
+}
+.installment-overview,
+.report-summary,
+.sale-detail-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin: 20px 0;
+}
+.installment-overview > div,
+.report-summary > div,
+.sale-detail-cards > div {
+  background: #fff;
+  border: 1px solid #ecf0ec;
+  border-radius: 13px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+}
+.installment-overview small,
+.report-summary small,
+.sale-detail-cards small {
+  font-size: 10px;
+  color: #a2aca3;
+  margin: 15px 0 6px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+.installment-overview strong,
+.report-summary strong,
+.sale-detail-cards strong {
+  font-size: 22px;
+  letter-spacing: -0.045em;
+}
+.payments-history {
+  margin-top: 20px;
+}
+.report-row .report-buttons {
+  display: flex;
+  gap: 7px;
+}
+.sale-detail-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+}
+.sale-detail-head h2 {
+  font-size: 24px;
+  margin: 12px 0 5px;
+}
+.sale-detail-head p {
+  font-size: 12px;
+  color: #a2aaa3;
+}
+.sale-detail-cards {
+  grid-template-columns: repeat(4, 1fr);
+}
+.sale-detail-info > div:not(.admin-panel-head) {
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid #f0f2ef;
+  padding: 15px 0;
+  font-size: 12px;
+  gap: 15px;
+}
+.sale-detail-info > div > span {
+  color: #a2aea4;
+}
+.sale-detail-info > div > strong {
+  text-align: right;
+}
+.serial-list {
+  max-height: 180px;
+  overflow: auto;
+  margin: 17px 0;
+}
+.serial-list > div {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #ecefec;
+  font-size: 11px;
+}

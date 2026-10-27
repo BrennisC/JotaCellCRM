@@ -1,0 +1,57 @@
+@media (max-width: 800px) {
+  .admin-row-price {
+    min-width: 0;
+  }
+  .admin-product-row,
+  .inventory-row,
+  .sale-row,
+  .installment-admin-row,
+  .report-row {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .admin-product-row > .status-pill,
+  .inventory-row > .status-pill,
+  .sale-row > .status-pill {
+    margin-left: auto;
+  }
+  .admin-row-actions {
+    margin-left: auto;
+  }
+  .sale-detail-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .report-row .report-buttons {
+    margin-left: auto;
+  }
+}
+@media (max-width: 520px) {
+  .admin-product-row .admin-row-price,
+  .inventory-row > strong,
+  .sale-row > strong {
+    display: none;
+  }
+  .installment-overview,
+  .report-summary {
+    grid-template-columns: 1fr 1fr;
+  }
+  .installment-overview > div:last-child,
+  .report-summary > div:last-child {
+    grid-column: 1/-1;
+  }
+  .installment-overview strong,
+  .report-summary strong,
+  .sale-detail-cards strong {
+    font-size: 18px;
+  }
+  .installment-admin-row .admin-row-price {
+    margin-left: 48px;
+  }
+  .report-row .report-buttons {
+    width: 100%;
+    margin-left: 50px;
+  }
+  .admin-row-main {
+    flex-basis: 45%;
+  }
+}

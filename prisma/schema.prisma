@@ -1,0 +1,150 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Admin {
+  id             String     @id @default(cuid())
+  supabaseUserId String     @unique
+  email          String     @unique
+  name           String
+  audit          AuditLog[]
+  createdAt      DateTime   @default(now())
+}
+
+model LoginAttempt {
+  key          String    @id
+  attempts     Int       @default(0)
+  firstAt      DateTime  @default(now())
+  blockedUntil DateTime?
+}
+
+model Product {
+  id          String    @id @default(cuid())
+  slug        String    @unique
+  brand       String
+  model       String
+  description String    @default("")
+  featured    Boolean   @default(false)
+  published   Boolean   @default(false)
+  warranty    String    @default("12 meses")
+  condition   String    @default("Nuevo")
+  specs       Json      @default("{}")
+  images      Json      @default("[]")
+  variants    Variant[]
+  uploads     ProductImage[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model ProductImage {
+  id        String   @id @default(cuid())
+  productId String?
+  product   Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+  mime      String
+  content   Bytes
+  createdAt DateTime @default(now())
+}
+
+model Variant {
+  id             String        @id @default(cuid())
+  productId      String
+  product        Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
+  color          String
+  colorHex       String        @default("#dceaf4")
+  ram            String
+  storage        String
+  priceCents     Int
+  salePriceCents Int?
+  stock          Int           @default(0)
+  serials        DeviceSerial[]
+  sales          Sale[]
+  @@unique([productId, color, ram, storage])
+}
+
+model DeviceSerial {
+  id        String   @id @default(cuid())
+  variantId String
+  variant   Variant  @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  imei      String   @unique
+  sold      Boolean  @default(false)
+}
+
+model Sale {
+  id             String        @id @default(cuid())
+  code           String        @unique
+  soldAt         DateTime      @db.Date
+  variantId      String
+  variant        Variant       @relation(fields: [variantId], references: [id], onDelete: Restrict)
+  imei           String?
+  buyerName      String
+  buyerDocument  String
+  buyerPhone     String        @default("")
+  priceCents     Int
+  downCents      Int           @default(0)
+  frequency      String        @default("monthly")
+  installmentsNo Int           @default(0)
+  type           String
+  status         String        @default("active")
+  installments   Installment[]
+  payments       Payment[]
+  paymentKeys    PaymentKey[]
+  createdAt      DateTime      @default(now())
+}
+
+model Installment {
+  id          String    @id @default(cuid())
+  saleId      String
+  sale        Sale      @relation(fields: [saleId], references: [id], onDelete: Cascade)
+  number      Int
+  dueAt       DateTime  @db.Date
+  amountCents Int
+  paidCents   Int       @default(0)
+  payments    Payment[]
+  @@unique([saleId, number])
+}
+
+model PaymentKey {
+  key       String @id
+  saleId    String
+  sale      Sale   @relation(fields: [saleId], references: [id], onDelete: Cascade)
+}
+
+model Payment {
+  id            String       @id @default(cuid())
+  saleId        String
+  sale          Sale         @relation(fields: [saleId], references: [id], onDelete: Cascade)
+  installmentId String?
+  installment   Installment? @relation(fields: [installmentId], references: [id], onDelete: SetNull)
+  amountCents   Int
+  kind          String
+  paidAt        DateTime     @db.Date
+  reference     String       @default("")
+  createdAt     DateTime     @default(now())
+}
+
+model StoreSettings {
+  id      Int    @id @default(1)
+  name    String @default("JOTACELL")
+  address String @default("")
+  phone   String @default("")
+  email   String @default("")
+  hours   String @default("")
+  about   String @default("")
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  adminId   String
+  admin     Admin    @relation(fields: [adminId], references: [id], onDelete: Restrict)
+  action    String
+  entity    String
+  entityId  String
+  detail    Json     @default("{}")
+  createdAt DateTime @default(now())
+}
