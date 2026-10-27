@@ -1,11 +1,17 @@
 "use client";
 import { useState } from "react";
 import Image from "next/image";
-import { Edit3, Plus, Search, Smartphone, Trash2 } from "lucide-react";
+import { Edit3, Plus, Smartphone, Trash2 } from "lucide-react";
 import { money } from "@/lib/format";
 import type { AdminData, Product, Variant } from "./types";
-import { Actions, Badge, Field, Modal, PageTitle } from "./form-parts";
+import { Badge, Modal, PageTitle } from "./form-parts";
 import { ProductForm } from "./product-form";
+import { VariantForm } from "./variant-form";
+import { ProductFilters } from "./product-filters";
+import { AdminPager } from "./admin-pager";
+import { paginate } from "@/lib/pagination";
+
+const PAGE_SIZE = 8;
 
 type Submit = (
   path: string,
@@ -23,14 +29,34 @@ export function ProductsSection({
     [modal, setModal] = useState(false),
     [variantProduct, setVariantProduct] = useState<Product | null>(null),
     [variant, setVariant] = useState<Variant | null>(null),
-    [busy, setBusy] = useState(false),
-    [error, setError] = useState(""),
-    [search, setSearch] = useState("");
-  const products = data.products.filter((p) =>
-    `${p.brand} ${p.model} ${p.slug}`
-      .toLowerCase()
-      .includes(search.toLowerCase()),
-  );
+    [search, setSearch] = useState(""),
+    [brand, setBrand] = useState(""),
+    [visibility, setVisibility] = useState(""),
+    [page, setPage] = useState(1);
+  const filtered = data.products.filter((p) => {
+    if (
+      !`${p.brand} ${p.model} ${p.slug}`
+        .toLowerCase()
+        .includes(search.trim().toLowerCase())
+    )
+      return false;
+    if (brand && p.brand !== brand) return false;
+    if (visibility === "published" && !p.published) return false;
+    if (visibility === "hidden" && p.published) return false;
+    return true;
+  });
+  const products = paginate(filtered, page, PAGE_SIZE);
+  const brands = [...new Set(data.products.map((p) => p.brand))].sort();
+  const update = (setter: (value: string) => void) => (value: string) => {
+    setter(value);
+    setPage(1);
+  };
+  const clearFilters = () => {
+    setSearch("");
+    setBrand("");
+    setVisibility("");
+    setPage(1);
+  };
   const remove = async (p: Product) => {
     if (
       !window.confirm(
@@ -60,23 +86,25 @@ export function ProductsSection({
           </button>
         }
       />
-      <div className="admin-search">
-        <Search size={18} />
-        <input
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Buscar marca, modelo o identificador..."
-        />
-      </div>
+      <ProductFilters
+        search={search}
+        brand={brand}
+        visibility={visibility}
+        brands={brands}
+        onSearch={update(setSearch)}
+        onBrand={update(setBrand)}
+        onVisibility={update(setVisibility)}
+        onClear={clearFilters}
+      />
       <div className="admin-panel table-panel">
         <div className="admin-panel-head">
           <div>
             <h2>Todos los modelos</h2>
-            <p>{products.length} registrados</p>
+            <p>{products.total} registrados</p>
           </div>
         </div>
-        {products.length ? (
-          products.map((p) => (
+        {products.items.length ? (
+          products.items.map((p) => (
             <div className="admin-product-group" key={p.id}>
               <div className="admin-product-row">
                 <div className="admin-product-thumb">
@@ -118,7 +146,6 @@ export function ProductsSection({
                     onClick={() => {
                       setVariantProduct(p);
                       setVariant(null);
-                      setError("");
                     }}
                   >
                     <Plus size={17} />
@@ -148,7 +175,6 @@ export function ProductsSection({
                       onClick={() => {
                         setVariantProduct(p);
                         setVariant(v);
-                        setError("");
                       }}
                       title={`Editar ${v.color} ${v.storage}`}
                     >
@@ -169,6 +195,12 @@ export function ProductsSection({
             </p>
           </div>
         )}
+        <AdminPager
+          page={products.page}
+          pages={products.pages}
+          onChange={setPage}
+          label="Páginas de celulares"
+        />
       </div>
       {modal && (
         <Modal
@@ -187,104 +219,14 @@ export function ProductsSection({
           title={variant ? "Editar variante" : "Nueva variante"}
           onClose={() => setVariantProduct(null)}
         >
-          <form
-            onSubmit={async (e) => {
-              e.preventDefault();
-              setBusy(true);
-              setError("");
-              try {
-                await submit(
-                  "products",
-                  {
-                    ...Object.fromEntries(new FormData(e.currentTarget)),
-                    productId: variantProduct.id,
-                    id: variant?.id,
-                  },
-                  "PATCH",
-                );
-                setVariantProduct(null);
-              } catch (ex) {
-                setError((ex as Error).message);
-              } finally {
-                setBusy(false);
-              }
-            }}
-          >
-            <p className="form-help">
-              {variantProduct.brand} {variantProduct.model}
-            </p>
-            <div className="admin-form-grid">
-              <Field label="Color">
-                <input
-                  name="color"
-                  defaultValue={variant?.color}
-                  placeholder="Azul niebla"
-                  required
-                />
-              </Field>
-              <Field label="Color hexadecimal">
-                <input
-                  name="colorHex"
-                  type="color"
-                  defaultValue={variant?.colorHex || "#dceaf4"}
-                />
-              </Field>
-              <Field label="RAM">
-                <input
-                  name="ram"
-                  defaultValue={variant?.ram}
-                  placeholder="8 GB"
-                  required
-                />
-              </Field>
-              <Field label="Almacenamiento">
-                <input
-                  name="storage"
-                  defaultValue={variant?.storage}
-                  placeholder="256 GB"
-                  required
-                />
-              </Field>
-              <Field label="Precio regular (S/)">
-                <input
-                  name="price"
-                  type="number"
-                  step="0.01"
-                  min="0.01"
-                  defaultValue={
-                    variant?.priceCents ? variant.priceCents / 100 : undefined
-                  }
-                  required
-                />
-              </Field>
-              <Field label="Precio oferta (opcional)">
-                <input
-                  name="salePrice"
-                  type="number"
-                  step="0.01"
-                  min="0.01"
-                  defaultValue={
-                    variant?.salePriceCents
-                      ? variant.salePriceCents / 100
-                      : undefined
-                  }
-                />
-              </Field>
-              <Field label="Stock disponible">
-                <input
-                  name="stock"
-                  type="number"
-                  min="0"
-                  required
-                  defaultValue={variant?.stock ?? 0}
-                />
-              </Field>
-            </div>
-            {error && <p className="form-error">{error}</p>}
-            <Actions busy={busy} cancel={() => setVariantProduct(null)} />
-          </form>
+          <VariantForm
+            product={variantProduct}
+            variant={variant}
+            submit={submit}
+            onClose={() => setVariantProduct(null)}
+          />
         </Modal>
-      )}
+      )}{" "}
     </>
   );
 }

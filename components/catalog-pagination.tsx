@@ -1,9 +1,6 @@
 import Link from "next/link";
-import {
-  catalogHref,
-  pageWindow,
-  type CatalogSearch,
-} from "@/lib/catalog-filters";
+import { catalogHref, type CatalogSearch } from "@/lib/catalog-filters";
+import { pageWindow } from "@/lib/pagination";
 
 export function CatalogPagination({
   page,

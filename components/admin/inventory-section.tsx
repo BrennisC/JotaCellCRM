@@ -3,6 +3,10 @@ import { useState } from "react";
 import { ArrowUpRight, Package, Search, Smartphone } from "lucide-react";
 import type { AdminData, Variant } from "./types";
 import { Actions, Badge, Field, Modal, PageTitle } from "./form-parts";
+import { AdminPager } from "./admin-pager";
+import { paginate } from "@/lib/pagination";
+
+const PAGE_SIZE = 10;
 type Submit = (
   path: string,
   body: Record<string, unknown>,
@@ -18,14 +22,30 @@ export function InventorySection({
   const [selected, setSelected] = useState<Variant | null>(null),
     [busy, setBusy] = useState(false),
     [error, setError] = useState(""),
-    [query, setQuery] = useState("");
-  const rows = data.products
+    [query, setQuery] = useState(""),
+    [brand, setBrand] = useState(""),
+    [availability, setAvailability] = useState(""),
+    [page, setPage] = useState(1);
+  const filtered = data.products
     .flatMap((p) => p.variants.map((v) => ({ p, v })))
-    .filter(({ p, v }) =>
-      `${p.brand} ${p.model} ${v.color} ${v.storage}`
-        .toLowerCase()
-        .includes(query.toLowerCase()),
-    );
+    .filter(({ p, v }) => {
+      if (
+        !`${p.brand} ${p.model} ${v.color} ${v.storage}`
+          .toLowerCase()
+          .includes(query.trim().toLowerCase())
+      )
+        return false;
+      if (brand && p.brand !== brand) return false;
+      if (availability === "stock" && v.stock <= 0) return false;
+      if (availability === "empty" && v.stock > 0) return false;
+      return true;
+    });
+  const rows = paginate(filtered, page, PAGE_SIZE);
+  const brands = [...new Set(data.products.map((p) => p.brand))].sort();
+  const reset = (setter: (value: string) => void) => (value: string) => {
+    setter(value);
+    setPage(1);
+  };
   return (
     <>
       <PageTitle
@@ -33,13 +53,52 @@ export function InventorySection({
         title="Inventario"
         description="Revisa existencias y registra identificadores de equipos."
       />
-      <div className="admin-search">
-        <Search size={18} />
-        <input
-          placeholder="Buscar modelo o variante..."
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-        />
+      <div className="admin-filters">
+        <div className="admin-search">
+          <Search size={18} />
+          <input
+            placeholder="Buscar modelo o variante..."
+            value={query}
+            onChange={(event) => reset(setQuery)(event.target.value)}
+          />
+        </div>
+        <label>
+          Marca
+          <select
+            value={brand}
+            onChange={(event) => reset(setBrand)(event.target.value)}
+          >
+            <option value="">Todas</option>
+            {brands.map((item) => (
+              <option key={item} value={item}>
+                {item}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label>
+          Existencias
+          <select
+            value={availability}
+            onChange={(event) => reset(setAvailability)(event.target.value)}
+          >
+            <option value="">Todas</option>
+            <option value="stock">Con stock</option>
+            <option value="empty">Agotadas</option>
+          </select>
+        </label>
+        <button
+          type="button"
+          className="admin-secondary"
+          onClick={() => {
+            setQuery("");
+            setBrand("");
+            setAvailability("");
+            setPage(1);
+          }}
+        >
+          Limpiar
+        </button>
       </div>
       <div className="admin-panel table-panel">
         <div className="admin-panel-head">
@@ -48,8 +107,8 @@ export function InventorySection({
             <p>El stock se descuenta automáticamente al registrar una venta</p>
           </div>
         </div>
-        {rows.length ? (
-          rows.map(({ p, v }) => (
+        {rows.items.length ? (
+          rows.items.map(({ p, v }) => (
             <div className="inventory-row" key={v.id}>
               <span className="stat-icon blue">
                 <Smartphone size={20} />
@@ -67,7 +126,7 @@ export function InventorySection({
                 {v.stock ? "Disponible" : "Agotado"}
               </Badge>
               <button
-                className="admin-secondary small"
+                className="admin-secondary"
                 onClick={() => {
                   setSelected(v);
                   setError("");
@@ -86,6 +145,12 @@ export function InventorySection({
             </p>
           </div>
         )}
+        <AdminPager
+          page={rows.page}
+          pages={rows.pages}
+          onChange={setPage}
+          label="Páginas del inventario"
+        />
       </div>
       {selected && (
         <Modal
