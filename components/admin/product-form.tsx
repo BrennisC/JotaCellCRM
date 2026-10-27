@@ -122,7 +122,7 @@ export function ProductForm({
       </div>
       <div className="admin-form-subheading">Fotografías del equipo</div>
       <p className="form-help">
-        Subí imágenes JPG, PNG o WebP (máximo 5 MB). Orden sugerido: frontal,
+        Sube imágenes JPG, PNG o WebP (máximo 4 MB). Orden sugerido: frontal,
         reverso, lateral, cámara y pantalla.
       </p>
       <div className="upload-list">

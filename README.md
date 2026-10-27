@@ -30,7 +30,7 @@ Todos los precios y cobros se expresan exclusivamente en soles peruanos (PEN, S/
 | Descargar Excel o PDF                                    | Reportes                             |
 | Cambiar contraseña o datos públicos                      | Configuración                        |
 
-Las fotografías JPG/PNG/WebP (máximo 5 MB cada una) se almacenan en PostgreSQL. Los importes se calculan en céntimos enteros. Las ventas descuentan stock de forma transaccional; los pagos usan una clave única y se asignan a las cuotas más antiguas. Eliminar un modelo sin ventas borra sus variantes/series en cascada; con ventas registradas, se oculta para conservar el historial financiero. El acceso administrativo utiliza JWT de Supabase Auth en cookies `HttpOnly`; la aplicación comprueba el token con Auth **y** el User ID registrado en Prisma en cada operación. Los tokens de renovación permiten mantener la sesión sin exponerlos a JavaScript.
+Las fotografías JPG/PNG/WebP (máximo 4 MB cada una) se almacenan en PostgreSQL. Los importes se calculan en céntimos enteros. Las ventas descuentan stock de forma transaccional; los pagos usan una clave única y se asignan a las cuotas más antiguas. Eliminar un modelo sin ventas borra sus variantes/series en cascada; con ventas registradas, se oculta para conservar el historial financiero. El acceso administrativo utiliza JWT de Supabase Auth en cookies `HttpOnly`; la aplicación comprueba el token con Auth **y** el User ID registrado en Prisma en cada operación. Los tokens de renovación permiten mantener la sesión sin exponerlos a JavaScript.
 
 ## Verificación
 

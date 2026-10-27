@@ -16,11 +16,11 @@ export async function POST(request: NextRequest) {
   const file = form.get("file");
   if (
     !(file instanceof File) ||
-    file.size > 5 * 1024 * 1024 ||
+    file.size > 4 * 1024 * 1024 ||
     !["image/jpeg", "image/png", "image/webp"].includes(file.type)
   )
     return NextResponse.json(
-      { error: "Seleccioná una imagen JPG, PNG o WebP de hasta 5 MB." },
+      { error: "Selecciona una imagen JPG, PNG o WebP de hasta 4 MB." },
       { status: 400 },
     );
   const bytes = new Uint8Array(await file.arrayBuffer());
