@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import {
   ArrowRight,
   ArrowUpRight,
@@ -15,8 +16,15 @@ import {
   PhoneArtwork,
 } from "@/components/store-shell";
 import { ProductCard } from "@/components/product-card";
+import { BrandMark } from "@/components/brand-mark";
+import { StoreJsonLd } from "@/components/structured-data";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+  openGraph: { url: "/" },
+};
 export default async function Home() {
   let products: Awaited<ReturnType<typeof catalog>> = [],
     settings: { name: string; address: string; phone: string } | null = null;
@@ -198,9 +206,7 @@ export default async function Home() {
                   key={b}
                   className="brand-tile"
                 >
-                  <span className="brand-monogram">
-                    {b.slice(0, 2).toUpperCase()}
-                  </span>
+                  <BrandMark brand={b} />
                   <strong>{b}</strong>
                   <ArrowUpRight size={18} />
                 </Link>
@@ -260,6 +266,11 @@ export default async function Home() {
         </section>
       </main>
       <StoreFooter
+        name={name}
+        address={settings?.address}
+        phone={settings?.phone}
+      />
+      <StoreJsonLd
         name={name}
         address={settings?.address}
         phone={settings?.phone}

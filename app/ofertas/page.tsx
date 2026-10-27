@@ -1,9 +1,17 @@
+import type { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
 import { catalog } from "@/lib/catalog";
 import { StoreHeader, StoreFooter } from "@/components/store-shell";
 import { ProductCard } from "@/components/product-card";
 
 export const dynamic = "force-dynamic";
+export const metadata: Metadata = {
+  title: "Ofertas en celulares",
+  description:
+    "Celulares con precio de oferta vigente. Aprovecha equipos nuevos con garantía.",
+  alternates: { canonical: "/ofertas" },
+  openGraph: { url: "/ofertas" },
+};
 export default async function Offers() {
   let products: Awaited<ReturnType<typeof catalog>> = [];
   let settings: { name: string; address: string; phone: string } | null = null;

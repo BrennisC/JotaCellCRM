@@ -1,8 +1,16 @@
+import type { Metadata } from "next";
 import { Clock3, Mail, MapPin, Phone } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { StoreHeader, StoreFooter } from "@/components/store-shell";
 
 export const dynamic = "force-dynamic";
+export const metadata: Metadata = {
+  title: "Contacto",
+  description:
+    "Escríbenos por WhatsApp para coordinar tu compra, consultar stock o pedir asesoría sobre tu próximo celular.",
+  alternates: { canonical: "/contacto" },
+  openGraph: { url: "/contacto" },
+};
 export default async function Contact() {
   let settings: {
     name: string;

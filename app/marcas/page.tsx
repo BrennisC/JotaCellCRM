@@ -1,9 +1,18 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { StoreHeader, StoreFooter } from "@/components/store-shell";
+import { BrandMark } from "@/components/brand-mark";
 
 export const dynamic = "force-dynamic";
+export const metadata: Metadata = {
+  title: "Marcas de celulares",
+  description:
+    "Explora las marcas disponibles en JOTACELL y entra directo al catálogo de cada fabricante.",
+  alternates: { canonical: "/marcas" },
+  openGraph: { url: "/marcas" },
+};
 export default async function Brands() {
   let brands: { brand: string; _count: { _all: number } }[] = [];
   let settings: { name: string; address: string; phone: string } | null = null;
@@ -22,7 +31,7 @@ export default async function Brands() {
       <StoreHeader name={settings?.name} />
       <main className="store-container simple-page">
         <span className="eyebrow">
-          <span /> EXPLORÁ POR FABRICANTE
+          <span /> EXPLORA POR FABRICANTE
         </span>
         <h1>
           Grandes marcas,
@@ -37,9 +46,7 @@ export default async function Brands() {
                 href={`/celulares?marca=${encodeURIComponent(b.brand)}`}
                 key={b.brand}
               >
-                <span className="brand-monogram">
-                  {b.brand.slice(0, 2).toUpperCase()}
-                </span>
+                <BrandMark brand={b.brand} />
                 <div>
                   <strong>{b.brand}</strong>
                   <small>
