@@ -1,5 +1,11 @@
 import { afterEach, beforeEach, expect, test } from "bun:test";
-import { objectKey, objectUrl, r2Config, validImageUrl } from "./r2";
+import {
+  objectKey,
+  objectKeyFromUrl,
+  objectUrl,
+  r2Config,
+  validImageUrl,
+} from "./r2";
 
 const base = "https://pub-abc123.r2.dev";
 const original = { ...process.env };
@@ -51,4 +57,17 @@ test("without configuration only legacy ids are accepted", () => {
   delete process.env.R2_PUBLIC_URL;
   expect(validImageUrl(`${base}/products/a.jpg`)).toBe(false);
   expect(validImageUrl("/api/images/cuid123")).toBe(true);
+});
+
+test("object key is derived only from our own product urls", () => {
+  const config = r2Config()!;
+  expect(objectKeyFromUrl(config, `${base}/products/a.webp`)).toBe(
+    "products/a.webp",
+  );
+  expect(objectKeyFromUrl(config, "https://evil.example/products/a.webp")).toBe(
+    null,
+  );
+  expect(objectKeyFromUrl(config, `${base}/other/a.webp`)).toBe(null);
+  expect(objectKeyFromUrl(config, `${base}/products/../secret`)).toBe(null);
+  expect(objectKeyFromUrl(config, "/api/images/cuid123")).toBe(null);
 });

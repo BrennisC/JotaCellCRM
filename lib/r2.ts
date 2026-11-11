@@ -34,6 +34,13 @@ export const objectKey = (extension: string) =>
 export const objectUrl = (config: R2Config, key: string) =>
   `${config.publicUrl}/${key}`;
 
+/** Bucket key for one of our public product urls, or null when it is not ours. */
+export function objectKeyFromUrl(config: R2Config, url: string) {
+  if (!url.startsWith(`${config.publicUrl}/products/`)) return null;
+  const key = url.slice(config.publicUrl.length + 1);
+  return key.includes("..") ? null : key;
+}
+
 const endpoint = (config: R2Config, key: string) =>
   `https://${config.accountId}.r2.cloudflarestorage.com/${config.bucket}/${key}`;
 

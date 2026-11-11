@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { ImagePlus, Trash2 } from "lucide-react";
 import type { Product } from "./types";
@@ -8,6 +8,15 @@ import { FirstVariantFields } from "./first-variant-fields";
 import { specFields } from "@/lib/spec-fields";
 
 import { fetchWithAuth } from "@/lib/client-auth";
+
+const discardImages = (urls: string[]) => {
+  if (!urls.length) return;
+  void fetchWithAuth("/api/admin/upload", {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ urls }),
+  }).catch(() => {});
+};
 
 export function ProductForm({
   product,
@@ -25,6 +34,15 @@ export function ProductForm({
     [specs, setSpecs] = useState<Record<string, Record<string, string>>>(
       product?.specs || {},
     );
+  const uploads = useRef<string[]>([]),
+    removed = useRef<string[]>([]),
+    saved = useRef(false);
+  useEffect(
+    () => () => {
+      if (!saved.current) discardImages(uploads.current);
+    },
+    [],
+  );
   const upload = async (files: FileList | null) => {
     if (!files) return;
     setUploading(true);
@@ -40,6 +58,7 @@ export function ProductForm({
         const json = await res.json();
         if (!res.ok) throw new Error(json.error);
         setImages((items) => [...items, json.url]);
+        uploads.current.push(json.url);
       } catch (e) {
         setError((e as Error).message);
         break;
@@ -74,6 +93,8 @@ export function ProductForm({
                 }
               : undefined,
           });
+          saved.current = true;
+          discardImages(removed.current);
           onClose();
         } catch (e) {
           setError((e as Error).message);
@@ -145,9 +166,17 @@ export function ProductForm({
             <button
               type="button"
               aria-label="Quitar fotografía"
-              onClick={() =>
-                setImages((items) => items.filter((_, j) => j !== i))
-              }
+              onClick={() => {
+                setImages((items) => items.filter((_, j) => j !== i));
+                if (uploads.current.includes(url)) {
+                  uploads.current = uploads.current.filter(
+                    (item) => item !== url,
+                  );
+                  discardImages([url]);
+                } else {
+                  removed.current.push(url);
+                }
+              }}
             >
               <Trash2 size={16} />
             </button>

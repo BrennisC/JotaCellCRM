@@ -1,7 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getAdmin, validOrigin } from "@/lib/security";
-import { r2Config, uploadImage } from "@/lib/r2";
+import { guarded } from "@/lib/api";
+import {
+  deleteObject,
+  objectKeyFromUrl,
+  r2Config,
+  uploadImage,
+  validImageUrl,
+} from "@/lib/r2";
 
 export const runtime = "nodejs";
 export async function POST(request: NextRequest) {
@@ -62,4 +69,47 @@ export async function POST(request: NextRequest) {
     data: { mime: file.type, content: bytes },
   });
   return NextResponse.json({ url: `/api/images/${image.id}` });
+}
+
+/** Removes images that no product references yet (discarded uploads). */
+export async function DELETE(request: NextRequest) {
+  return guarded(request, async () => {
+    const body = (await request.json().catch(() => null)) as {
+      urls?: unknown;
+    } | null;
+    const urls = Array.isArray(body?.urls)
+      ? [
+          ...new Set(
+            body.urls.filter((url): url is string => typeof url === "string"),
+          ),
+        ].slice(0, 20)
+      : [];
+    if (!urls.length) return NextResponse.json({ removed: 0 });
+
+    const products = await prisma.product.findMany({
+      select: { images: true },
+    });
+    const used = new Set<string>();
+    for (const product of products)
+      if (Array.isArray(product.images))
+        for (const image of product.images)
+          if (typeof image === "string") used.add(image);
+
+    const config = r2Config();
+    let removed = 0;
+    for (const url of urls) {
+      if (!validImageUrl(url) || used.has(url)) continue;
+      const legacyId = /^\/api\/images\/([a-z0-9]+)$/.exec(url)?.[1];
+      if (legacyId) {
+        const result = await prisma.productImage.deleteMany({
+          where: { id: legacyId },
+        });
+        removed += result.count;
+        continue;
+      }
+      const key = config ? objectKeyFromUrl(config, url) : null;
+      if (config && key && (await deleteObject(config, key))) removed++;
+    }
+    return NextResponse.json({ removed });
+  });
 }
