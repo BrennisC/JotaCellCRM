@@ -61,9 +61,6 @@ export function SaleForm({
         <div className="admin-form-grid">
           {!editing && (
             <>
-              <Field label="Código de operación">
-                <input name="code" required placeholder="VEN-001" />
-              </Field>
               <Field label="Fecha">
                 <input
                   name="date"
@@ -173,8 +170,10 @@ export function SaleForm({
         </div>
         {!editing && (
           <p className="form-help">
-            En ventas al contado se registra el cobro completo. En cuotas se
-            crea el cronograma; la inicial se registra como pago manual.
+            El código de operación se genera automáticamente (VEN-001,
+            VEN-002...). En ventas al contado se registra el cobro completo. En
+            cuotas se crea el cronograma; la inicial se registra como pago
+            manual.
           </p>
         )}
         {editing && (

@@ -3,13 +3,17 @@ import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { guarded, InputError, integer, required } from "@/lib/api";
 import { parseDate, schedule, toCents } from "@/lib/finance";
+import { nextSaleCode } from "@/lib/sale-code";
 
 export const runtime = "nodejs";
+async function generateSaleCode(tx: Prisma.TransactionClient) {
+  const rows = await tx.sale.findMany({ select: { code: true } });
+  return nextSaleCode(rows.map((row) => row.code));
+}
 export async function POST(request: NextRequest) {
   return guarded(request, async (adminId) => {
     const d = await request.json();
-    const code = required(d.code, "Código"),
-      variantId = required(d.variantId, "Variante");
+    const variantId = required(d.variantId, "Variante");
     const soldAt = parseDate(d.date),
       priceCents = toCents(d.price),
       downCents = toCents(d.down ?? "0");
@@ -46,6 +50,7 @@ export async function POST(request: NextRequest) {
           if (serial.count !== 1)
             throw new InputError("IMEI no registrado o ya vendido.");
         }
+        const code = await generateSaleCode(tx);
         const created = await tx.sale.create({
           data: {
             code,
